@@ -1,0 +1,23 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #ffe4f0, #fff);
+  text-align: center;
+  margin: 0;
+}
+h1 { color: #ff4081; }
+.card {
+  background: #fff;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 15px;
+  width: 80%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.hidden { display: none; }
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #ff4081;
+  font-weight: bold;
+}
+nav a:hover { color: #e91e63; }

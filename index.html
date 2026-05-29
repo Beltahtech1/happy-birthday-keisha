@@ -4,8 +4,82 @@
   <meta charset="UTF-8">
   <title>Keisha's Birthday</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Glitter background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+      background-size: 3px 3px;
+      animation: sparkle 6s linear infinite;
+      z-index: -1;
+    }
+    @keyframes sparkle {
+      from { background-position: 0 0; }
+      to { background-position: 100% 100%; }
+    }
+
+    h1 { color: #ff4081; margin-top: 30px; font-size: 3em; }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 20px;
+      width: 80%;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
+    }
+
+    /* Glowing buttons */
+    button, nav a {
+      display: inline-block;
+      margin: 15px;
+      padding: 14px 28px;
+      border-radius: 35px;
+      background: linear-gradient(45deg, #ff4081, #ff80ab, #ffc1e3);
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 15px #ff4081, 0 0 30px #ff80ab, 0 0 45px #ffc1e3;
+      transition: all 0.4s ease;
+    }
+    button:hover, nav a:hover {
+      box-shadow: 0 0 25px #fff, 0 0 50px #ff4081, 0 0 70px #ff80ab;
+      transform: scale(1.08);
+    }
+
+    .hidden { display: none; }
+
+    #countdown {
+      font-size: 2em;
+      margin: 20px;
+      color: #fff;
+    }
+
+    nav {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
+  <!-- Background Music -->
+  <iframe id="bgMusic" width="0" height="0" src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&loop=1&playlist=https://youtu.be/020g-0hhCAU?si=yWRFbqouNvEJ9h6T" frameborder="0" allow="autoplay"></iframe>
+
+  <!-- Verification Section -->
   <div id="verification" class="card">
     <h1>🎂 Welcome to Keisha’s Birthday!</h1>
     <p>Select her birthday to unlock the celebration:</p>
@@ -18,17 +92,63 @@
     </div>
   </div>
 
-  <div id="mainContent" class="hidden">
+  <!-- Main Content -->
+  <div id="mainContent" class="hidden card">
     <h1>🎉 Happy 1st Birthday, Keisha!</h1>
     <div id="countdown"></div>
     <nav>
-      <a href="gallery.html">Gallery</a>
-      <a href="story.html">Story</a>
-      <a href="letter.html">Letters</a>
-      <a href="surprise.html">Surprise</a>
+      <a href="gallery.html">📸 Gallery</a>
+      <a href="story.html">🌈 Story</a>
+      <a href="letter.html">💌 Letters</a>
+      <a href="surprise.html">🎁 Surprise</a>
     </nav>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    function checkBirthday() {
+      const input = document.getElementById("birthdayInput").value;
+      if (input === "2025-06-05") {
+        document.getElementById("verification").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+        startCountdown();
+      } else {
+        document.getElementById("wishSection").classList.remove("hidden");
+      }
+    }
+
+    function checkWish() {
+      const wish = document.getElementById("wishInput").value;
+      if (wish.length === 100) {
+        document.getElementById("verification").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+        startCountdown();
+      } else {
+        alert("Your message must be exactly 100 characters!");
+      }
+    }
+
+    function startCountdown() {
+      const countdown = document.getElementById("countdown");
+      const targetDate = new Date("June 5, 2026 00:00:00").getTime();
+
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdown.innerHTML = `Keisha turns ONE in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+        if (distance < 0) {
+          clearInterval(interval);
+          countdown.innerHTML = "🎉 Happy Birthday, Keisha!";
+        }
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
+

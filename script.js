@@ -8,6 +8,35 @@ function checkBirthday() {
     document.getElementById("wishSection").classList.remove("hidden");
   }
 }
+function playBackgroundVideo() {
+  const bgVideo = document.querySelector("#bgVideo iframe");
+  bgVideo.src = "https://www.youtube.com/embed/ho08YLYDM88?autoplay=1&mute=1&loop=1&playlist=ho08YLYDM88&controls=0&showinfo=0&modestbranding=1";
+  document.getElementById("bgVideo").classList.remove("hidden");
+}
+
+function checkBirthday() {
+  const input = document.getElementById("birthdayInput").value;
+  if (input === "2025-06-05") {
+    document.getElementById("verification").classList.add("hidden");
+    document.getElementById("mainContent").classList.remove("hidden");
+    startCountdown();
+    playBackgroundVideo();
+  } else {
+    document.getElementById("wishSection").classList.remove("hidden");
+  }
+}
+
+function checkWish() {
+  const wish = document.getElementById("wishInput").value;
+  if (wish.length === 100) {
+    document.getElementById("verification").classList.add("hidden");
+    document.getElementById("mainContent").classList.remove("hidden");
+    startCountdown();
+    playBackgroundVideo();
+  } else {
+    alert("Your message must be exactly 100 characters!");
+  }
+}
 
 function checkWish() {
   const wish = document.getElementById("wishInput").value;

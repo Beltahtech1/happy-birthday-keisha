@@ -73,17 +73,60 @@
     nav {
       margin-top: 20px;
     }
+
+    iframe {
+      display: none; /* keep hidden */
+    }
+
+    /* Analogue-style calendar selectors */
+    .calendar-select {
+      margin: 20px;
+    }
+    select {
+      padding: 10px;
+      border-radius: 10px;
+      margin: 5px;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
-  <!-- Background Music -->
-  <iframe id="bgMusic" width="0" height="0" src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&loop=1&playlist=https://youtu.be/020g-0hhCAU?si=yWRFbqouNvEJ9h6T" frameborder="0" allow="autoplay"></iframe>
-
   <!-- Verification Section -->
   <div id="verification" class="card">
     <h1>🎂 Welcome to Keisha’s Birthday!</h1>
     <p>Select her birthday to unlock the celebration:</p>
-    <input type="date" id="birthdayInput">
+    <div class="calendar-select">
+      <select id="year">
+        <!-- Years from 2026 back to 2010 -->
+        <script>
+          for (let y = 2026; y >= 2010; y--) {
+            document.write(`<option value="${y}">${y}</option>`);
+          }
+        </script>
+      </select>
+      <select id="month">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+      <select id="day">
+        <!-- Days 1–31 -->
+        <script>
+          for (let d = 1; d <= 31; d++) {
+            document.write(`<option value="${String(d).padStart(2,'0')}">${d}</option>`);
+          }
+        </script>
+      </select>
+    </div>
     <button onclick="checkBirthday()">Submit</button>
     <div id="wishSection" class="hidden">
       <p>Wrong date! Please write a 100-character birthday wish:</p>
@@ -104,13 +147,25 @@
     </nav>
   </div>
 
+  <!-- Background Music (hidden until unlocked) -->
+  <iframe id="bgMusic" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+
   <script>
+    // Default calendar display: January 14, 2010
+    document.getElementById("year").value = "2010";
+    document.getElementById("month").value = "01";
+    document.getElementById("day").value = "14";
+
     function checkBirthday() {
-      const input = document.getElementById("birthdayInput").value;
+      const year = document.getElementById("year").value;
+      const month = document.getElementById("month").value;
+      const day = document.getElementById("day").value;
+      const input = `${year}-${month}-${day}`;
       if (input === "2025-06-05") {
         document.getElementById("verification").classList.add("hidden");
         document.getElementById("mainContent").classList.remove("hidden");
         startCountdown();
+        playMusic();
       } else {
         document.getElementById("wishSection").classList.remove("hidden");
       }
@@ -122,6 +177,7 @@
         document.getElementById("verification").classList.add("hidden");
         document.getElementById("mainContent").classList.remove("hidden");
         startCountdown();
+        playMusic();
       } else {
         alert("Your message must be exactly 100 characters!");
       }
@@ -148,7 +204,12 @@
         }
       }, 1000);
     }
+
+    function playMusic() {
+      // Replace YOUR_VIDEO_ID with the actual YouTube video ID
+      const musicFrame = document.getElementById("bgMusic");
+      musicFrame.src = "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&loop=1&playlist=https://youtu.be/020g-0hhCAU?si=6QOnnndd6nP16tHE";
+    }
   </script>
 </body>
 </html>
-

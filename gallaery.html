@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Keisha’s Milestone Gallery</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    /* Glitter background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+      background-size: 3px 3px;
+      animation: sparkle 6s linear infinite;
+      z-index: -1;
+    }
+    @keyframes sparkle {
+      from { background-position: 0 0; }
+      to { background-position: 100% 100%; }
+    }
+
+    h1 { color: #ff4081; margin-top: 30px; font-size: 3em; }
+
+    .milestone {
+      background: rgba(255,255,255,0.1);
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 20px;
+      width: 80%;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+    .milestone img {
+      width: 200px;
+      border-radius: 15px;
+      margin-top: 15px;
+      box-shadow: 0 0 15px #ff4081;
+    }
+
+    /* Balloons and ribbons */
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      width: 80px;
+      animation: float 12s infinite ease-in;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-120vh); }
+    }
+    .ribbon {
+      position: absolute;
+      top: 0;
+      width: 60px;
+      animation: sway 6s infinite ease-in-out;
+    }
+    @keyframes sway {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(10deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-block;
+      margin: 30px auto;
+      padding: 14px 28px;
+      border-radius: 35px;
+      background: linear-gradient(45deg, #ff4081, #ff80ab, #ffc1e3);
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 0 15px #ff4081, 0 0 30px #ff80ab, 0 0 45px #ffc1e3;
+      transition: all 0.4s ease;
+    }
+    .back-btn:hover {
+      box-shadow: 0 0 25px #fff, 0 0 50px #ff4081, 0 0 70px #ff80ab;
+      transform: scale(1.08);
+    }
+  </style>
+</head>
+<body>
+  <h1>📸 Keisha’s Milestone Gallery</h1>
+
+  <div class="milestone">
+    <h2>Day 1 — Welcome to the World</h2>
+    <p>Born in Juja, Keisha brought endless joy to Dad Beltah and Mom Staicy. Her first cry was music to our hearts.</p>
+    <img src="YOUR_IMAGE_URL_DAY1" alt="Day 1">
+  </div>
+
+  <div class="milestone">
+    <h2>Month 1</h2>
+    <p>Keisha’s tiny smiles warmed Beltah and Staicy’s days. Every cuddle was a blessing.</p>
+    <img src="YOUR_IMAGE_URL_MONTH1" alt="Month 1">
+  </div>
+
+  <div class="milestone">
+    <h2>Month 2</h2>
+    <p>Her curious eyes began exploring the world. Dad sang lullabies, Mom whispered love.</p>
+    <img src="YOUR_IMAGE_URL_MONTH2" alt="Month 2">
+  </div>
+
+  <div class="milestone">
+    <h2>Month 3</h2>
+    <p>Keisha’s giggles filled the home. Beltah and Staicy cherished every sound of happiness.</p>
+    <img src="YOUR_IMAGE_URL_MONTH3" alt="Month 3">
+  </div>
+
+  <!-- Continue adding milestones up to Month 12 -->
+  <div class="milestone">
+    <h2>Month 12 — Happy Birthday!</h2>
+    <p>Keisha turns ONE! Dad Beltah and Mom Staicy celebrate their miracle with love and gratitude.</p>
+    <img src="YOUR_IMAGE_URL_MONTH12" alt="Month 12">
+  </div>
+
+  <!-- Back button -->
+  <a href="index.html" class="back-btn">⬅ Back to Menu</a>
+
+  <!-- Balloons -->
+  <img src="balloon.png" class="balloon" style="left:10%;" />
+  <img src="balloon.png" class="balloon" style="left:40%;" />
+  <img src="balloon.png" class="balloon" style="left:70%;" />
+
+  <!-- Ribbons -->
+  <img src="ribbon.png" class="ribbon" style="left:20%;" />
+  <img src="ribbon.png" class="ribbon" style="left:60%;" />
+</body>
+</html>

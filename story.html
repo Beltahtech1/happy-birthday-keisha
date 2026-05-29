@@ -4,18 +4,100 @@
   <meta charset="UTF-8">
   <title>Keisha’s Story</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    /* Glitter background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+      background-size: 3px 3px;
+      animation: sparkle 6s linear infinite;
+      z-index: -1;
+    }
+    @keyframes sparkle {
+      from { background-position: 0 0; }
+      to { background-position: 100% 100%; }
+    }
+
+    h1 { color: #ff4081; margin-top: 30px; font-size: 2.5em; }
+
+    .story-box {
+      background: rgba(255,255,255,0.1);
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 20px;
+      width: 80%;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+
+    /* Balloons and ribbons */
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      width: 80px;
+      animation: float 12s infinite ease-in;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-120vh); }
+    }
+    .ribbon {
+      position: absolute;
+      top: 0;
+      width: 60px;
+      animation: sway 6s infinite ease-in-out;
+    }
+    @keyframes sway {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(10deg); }
+      100% { transform: rotate(0deg); }
+    }
+  </style>
 </head>
 <body>
-  <h1>🌈 Keisha’s First Year</h1>
-  <div class="card">
-    <p>From the moment Keisha arrived, Beltah and Staicy’s world was filled with joy.</p>
-    <ul>
-      <li>👶 Newborn: Her first cry melted our hearts.</li>
-      <li>🍼 3 Months: Smiles that lit up our days.</li>
-      <li>🐻 6 Months: Sitting up with her teddy bear.</li>
-      <li>🚶 9 Months: Curious steps and laughter.</li>
-      <li>🎂 1 Year: Celebrating her first birthday together.</li>
-    </ul>
+  <h1>🌈 Keisha’s First Year Story</h1>
+
+  <div class="story-box">
+    <p>👶 <strong>Born in Juja</strong> — On June 5th, 2025, Keisha arrived, filling Beltah and Staicy’s hearts with joy. Her first cry was the sweetest sound, marking the beginning of a magical journey.</p>
   </div>
+
+  <div class="story-box">
+    <p>🍼 <strong>Three Months</strong> — Her smiles lit up our home. Dad Beltah loved singing to her, while Mom Staicy cuddled her endlessly. Every giggle was a melody of happiness.</p>
+  </div>
+
+  <div class="story-box">
+    <p>🐻 <strong>Six Months</strong> — Sitting up with her teddy bear, Keisha showed her curious spirit. Beltah cheered her on, and Staicy captured every moment in photos, preserving memories forever.</p>
+  </div>
+
+  <div class="story-box">
+    <p>🚶 <strong>Nine Months</strong> — Crawling and exploring, she filled the house with laughter. Dad guided her tiny steps, while Mom encouraged her with claps and kisses. Juja mordern became her playground of discovery.</p>
+  </div>
+
+  <div class="story-box">
+    <p>🎂 <strong>One Year</strong> — Now, we celebrate her first birthday. Beltah and Staicy look back with gratitude, amazed at how quickly their little miracle has grown. Keisha, you are our sunshine, our rainbow, our joy.</p>
+  </div>
+
+  <!-- Balloons -->
+  <img src="balloon.png" class="balloon" style="left:10%;" />
+  <img src="balloon.png" class="balloon" style="left:40%;" />
+  <img src="balloon.png" class="balloon" style="left:70%;" />
+
+  <!-- Ribbons -->
+  <img src="ribbon.png" class="ribbon" style="left:20%;" />
+  <img src="ribbon.png" class="ribbon" style="left:60%;" />
 </body>
 </html>

@@ -4,19 +4,152 @@
   <meta charset="UTF-8">
   <title>Letters to Keisha</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    /* Glitter background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+      background-size: 3px 3px;
+      animation: sparkle 6s linear infinite;
+      z-index: -1;
+    }
+    @keyframes sparkle {
+      from { background-position: 0 0; }
+      to { background-position: 100% 100%; }
+    }
+
+    h1 { color: #ff4081; margin-top: 30px; font-size: 3em; }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 20px;
+      width: 80%;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+
+    /* Guest messages list */
+    #guestMessages {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .guest-entry {
+      background: rgba(255,255,255,0.05);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ff80ab;
+    }
+
+    /* Glowing back button */
+    .back-btn {
+      display: inline-block;
+      margin: 30px auto;
+      padding: 14px 28px;
+      border-radius: 35px;
+      background: linear-gradient(45deg, #ff4081, #ff80ab, #ffc1e3);
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 0 15px #ff4081, 0 0 30px #ff80ab, 0 0 45px #ffc1e3;
+      transition: all 0.4s ease;
+    }
+    .back-btn:hover {
+      box-shadow: 0 0 25px #fff, 0 0 50px #ff4081, 0 0 70px #ff80ab;
+      transform: scale(1.08);
+    }
+
+    /* Balloons and ribbons */
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      width: 80px;
+      animation: float 12s infinite ease-in;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-120vh); }
+    }
+    .ribbon {
+      position: absolute;
+      top: 0;
+      width: 60px;
+      animation: sway 6s infinite ease-in-out;
+    }
+    @keyframes sway {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(10deg); }
+      100% { transform: rotate(0deg); }
+    }
+  </style>
 </head>
 <body>
   <h1>💌 Letters to Keisha</h1>
+
   <div class="card">
     <h2>From Dad (Beltah)</h2>
-    <p>My sweet Keisha, you are my sunshine. Watching you grow has been my greatest joy.</p>
-    <h2>From Mom (Staicy)</h2>
-    <p>Keisha, you are our miracle. Every giggle and hug fills my heart with love.</p>
-    <h2>From Guests</h2>
-    <form>
-      <textarea placeholder="Write your letter to Keisha..."></textarea><br>
-      <button type="submit">Submit</button>
-    </form>
+    <p>My sweet Keisha, you are my sunshine. Watching you grow has been my greatest joy. I promise to guide you always.</p>
   </div>
+
+  <div class="card">
+    <h2>From Mom (Staicy)</h2>
+    <p>Keisha, you are our miracle. Every giggle and hug fills my heart with love. I will always be here for you.</p>
+  </div>
+
+  <div class="card">
+    <h2>Guest Messages</h2>
+    <form onsubmit="addMessage(event)">
+      <input type="text" id="guestName" placeholder="Your Name" required><br><br>
+      <textarea id="guestMessage" placeholder="Write your message to Keisha..." required></textarea><br>
+      <button type="submit">Submit Message</button>
+    </form>
+    <div id="guestMessages"></div>
+  </div>
+
+  <!-- Back button -->
+  <a href="index.html" class="back-btn">⬅ Back to Menu</a>
+
+  <!-- Balloons -->
+  <img src="balloon.png" class="balloon" style="left:10%;" />
+  <img src="balloon.png" class="balloon" style="left:40%;" />
+  <img src="balloon.png" class="balloon" style="left:70%;" />
+
+  <!-- Ribbons -->
+  <img src="ribbon.png" class="ribbon" style="left:20%;" />
+  <img src="ribbon.png" class="ribbon" style="left:60%;" />
+
+  <script>
+    function addMessage(event) {
+      event.preventDefault();
+      const name = document.getElementById("guestName").value;
+      const message = document.getElementById("guestMessage").value;
+
+      const guestMessages = document.getElementById("guestMessages");
+      const entry = document.createElement("div");
+      entry.className = "guest-entry";
+      entry.innerHTML = `<strong>${name}:</strong> ${message}`;
+      guestMessages.appendChild(entry);
+
+      // Clear form
+      document.getElementById("guestName").value = "";
+      document.getElementById("guestMessage").value = "";
+    }
+  </script>
 </body>
 </html>

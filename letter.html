@@ -2,141 +2,357 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Letters to Keisha</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      text-align: center;
-      overflow-x: hidden;
+    :root {
+      --bg: #07070c;
+      --card-bg: rgba(15, 15, 25, 0.65);
+      --border: rgba(255, 64, 129, 0.3);
+      --accent: #ff4081;
+      --accent-glow: rgba(255, 64, 129, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #d1d1d6;
     }
 
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      text-align: center;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-    /* Glitter background */
     body::before {
       content: "";
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
-      background-size: 3px 3px;
-      animation: sparkle 6s linear infinite;
-      z-index: -1;
-    }
-    @keyframes sparkle {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 1400px; height: 100%;
+      background: radial-gradient(circle at 50% 25%, rgba(255, 64, 129, 0.2), transparent 60%);
+      z-index: -2;
+      pointer-events: none;
     }
 
-    h1 { color: #ff4081; margin-top: 30px; font-size: 3em; }
+    #ambientCanvas {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 40px 20px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0 0 30px 0;
+      background: linear-gradient(to right, #fff, #ff80ab);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Tab Controller Component */
+    .tabs-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 540px;
+    }
+    .tab-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 12px;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .tab-btn.active {
+      background: rgba(255, 64, 129, 0.15);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .card-group {
+      width: 100%;
+      max-width: 540px;
+    }
 
     .card {
-      background: rgba(255,255,255,0.1);
-      margin: 30px auto;
-      padding: 30px;
-      border-radius: 20px;
-      width: 80%;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
-      font-size: 1.2em;
-      line-height: 1.6;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 32px;
+      padding: 35px 30px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 25px;
+      text-align: left;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
     }
 
-    /* Guest messages list */
+    .card h2 {
+      margin: 0 0 12px 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #f3f4f6;
+      margin: 0;
+    }
+
+    /* Interactive Reaction Engine Badge Layout */
+    .reaction-bar {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+    .react-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .react-btn:hover {
+      background: rgba(255, 64, 129, 0.2);
+      border-color: var(--accent);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: rgba(15, 15, 25, 0.85);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      color: #fff;
+      padding: 16px;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    textarea {
+      height: 100px;
+      resize: none;
+    }
+
+    button, .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 36px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(45deg, #ff4081, #ff80ab);
+      color: #ffffff;
+      box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
+    }
+    button[type="submit"]:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(255, 64, 129, 0.7), 0 0 15px #fff;
+    }
+
     #guestMessages {
-      text-align: left;
-      margin-top: 20px;
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
     .guest-entry {
-      background: rgba(255,255,255,0.05);
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ff80ab;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border);
+      padding: 16px;
+      border-radius: 18px;
+      animation: fadeInEntry 0.5s ease-out forwards;
+    }
+    @keyframes fadeInEntry {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .guest-entry strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
     }
 
-    /* Glowing back button */
     .back-btn {
-      display: inline-block;
-      margin: 30px auto;
-      padding: 14px 28px;
-      border-radius: 35px;
-      background: linear-gradient(45deg, #ff4081, #ff80ab, #ffc1e3);
-      color: white;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 0 15px #ff4081, 0 0 30px #ff80ab, 0 0 45px #ffc1e3;
-      transition: all 0.4s ease;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: #fff;
+      margin-top: 15px;
+      margin-bottom: 30px;
+      width: fit-content;
     }
     .back-btn:hover {
-      box-shadow: 0 0 25px #fff, 0 0 50px #ff4081, 0 0 70px #ff80ab;
-      transform: scale(1.08);
+      border-color: var(--accent);
+      background: rgba(255, 64, 129, 0.08);
+      box-shadow: 0 0 25px var(--accent-glow);
+      transform: translateY(-3px);
     }
 
-    /* Balloons and ribbons */
-    .balloon {
-      position: absolute;
-      bottom: -100px;
-      width: 80px;
-      animation: float 12s infinite ease-in;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-120vh); }
-    }
-    .ribbon {
-      position: absolute;
-      top: 0;
-      width: 60px;
-      animation: sway 6s infinite ease-in-out;
-    }
-    @keyframes sway {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(10deg); }
-      100% { transform: rotate(0deg); }
+    .hidden { display: none !important; }
+
+    footer {
+      width: 100%;
+      padding: 24px 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.05em;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>💌 Letters to Keisha</h1>
 
-  <div class="card">
-    <h2>From Dad (Beltah)</h2>
-    <p>My sweet Keisha, you are my sunshine. Watching you grow has been my greatest joy. I promise to guide you always.</p>
-  </div>
+  <canvas id="ambientCanvas"></canvas>
 
-  <div class="card">
-    <h2>From Mom (Staicy)</h2>
-    <p>Keisha, you are our miracle. Every giggle and hug fills my heart with love. I will always be here for you.</p>
-  </div>
+  <main>
+    <h1>💌 Letters to Keisha</h1>
 
- <div class="card">
-  <h2>Guest Messages</h2>
-  <form onsubmit="addMessage(event)">
-    <input type="text" id="guestName" placeholder="✨ Your Name" required><br>
-    <textarea id="guestMessage" placeholder="💖 Write your message to Keisha..." required></textarea><br>
-    <button type="submit">Submit Message</button>
-  </form>
-  <div id="guestMessages"></div>
-</div>
+    <!-- SUGGESTION 1: Filter Tab Controls for Better UI Sorting -->
+    <div class="tabs-container">
+      <button class="tab-btn active" onclick="filterLetters('all', this)">All Letters</button>
+      <button class="tab-btn" onclick="filterLetters('family', this)">Family Only</button>
+      <button class="tab-btn" onclick="filterLetters('guests', this)">Guest Book</button>
+    </div>
 
+    <!-- Family Letters Group Container -->
+    <div id="familyGroup" class="card-group">
+      <div class="card">
+        <h2>👑 From Dad (Beltah)</h2>
+        <p>My sweet Keisha, you are my sunshine. Watching you grow has been my greatest joy. I promise to guide you always.</p>
+        <!-- SUGGESTION 2: Interactive Love & Heart Counters -->
+        <div class="reaction-bar">
+          <button class="react-btn" onclick="addReaction(this)">❤️ <span>12</span></button>
+          <button class="react-btn" onclick="addReaction(this)">✨ <span>8</span></button>
+        </div>
+      </div>
 
-  <!-- Back button -->
-  <a href="index.html" class="back-btn">⬅ Back to Menu</a>
+      <div class="card">
+        <h2>🌸 From Mom (Staicy)</h2>
+        <p>Keisha, you are our miracle. Every giggle and hug fills my heart with love. I will always be here for you.</p>
+        <div class="reaction-bar">
+          <button class="react-btn" onclick="addReaction(this)">❤️ <span>9</span></button>
+          <button class="react-btn" onclick="addReaction(this)">✨ <span>5</span></button>
+        </div>
+      </div>
+    </div>
 
-  <!-- Balloons -->
-  <img src="balloon.png" class="balloon" style="left:10%;" />
-  <img src="balloon.png" class="balloon" style="left:40%;" />
-  <img src="balloon.png" class="balloon" style="left:70%;" />
+    <!-- Guest Submission Card Container Component -->
+    <div id="guestGroup" class="card-group">
+      <div class="card">
+        <h2>🎉 Guest Messages</h2>
+        <form onsubmit="addMessage(event)">
+          <input type="text" id="guestName" placeholder="✨ Your Name" required>
+          <textarea id="guestMessage" placeholder="✍️ Write your loving message to Keisha..." required></textarea>
+          <button type="submit">Submit Message</button>
+        </form>
+        <div id="guestMessages"></div>
+      </div>
+    </div>
 
-  <!-- Ribbons -->
-  <img src="ribbon.png" class="ribbon" style="left:20%;" />
-  <img src="ribbon.png" class="ribbon" style="left:60%;" />
+    <a href="index.html" class="back-btn">⬅️ Back to Menu</a>
+  </main>
+
+  <footer>
+    CODED SUCCESSFULLY BY BELTAH[cite: 2]
+  </footer>
 
   <script>
+    // Tab filtering strategy
+    function filterLetters(category, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const family = document.getElementById('familyGroup');
+      const guests = document.getElementById('guestGroup');
+
+      if (category === 'all') {
+        family.classList.remove('hidden');
+        guests.classList.remove('hidden');
+      } else if (category === 'family') {
+        family.classList.remove('hidden');
+        guests.classList.add('hidden');
+      } else if (category === 'guests') {
+        family.classList.add('hidden');
+        guests.classList.remove('hidden');
+      }
+    }
+
+    // Reaction tracking mechanism
+    function addReaction(btn) {
+      const span = btn.querySelector('span');
+      let current = parseInt(span.innerText);
+      span.innerText = current + 1;
+      
+      // Temporary CSS scale splash animation
+      btn.style.transform = 'scale(1.2)';
+      setTimeout(() => btn.style.transform = 'none', 150);
+    }
+
     function addMessage(event) {
       event.preventDefault();
       const name = document.getElementById("guestName").value;
@@ -145,13 +361,78 @@
       const guestMessages = document.getElementById("guestMessages");
       const entry = document.createElement("div");
       entry.className = "guest-entry";
-      entry.innerHTML = `<strong>${name}:</strong> ${message}`;
-      guestMessages.appendChild(entry);
+      entry.innerHTML = `<strong>💝 ${name}</strong> ${message}`;
+      
+      guestMessages.insertBefore(entry, guestMessages.firstChild);
 
-      // Clear form
       document.getElementById("guestName").value = "";
       document.getElementById("guestMessage").value = "";
     }
+
+    // Floating Live Particle Engine Setup
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class FloatingItem {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * canvas.height; 
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.size = Math.random() * 15 + 8;
+        this.speed = Math.random() * 1 + 0.5;
+        this.type = Math.random() < 0.4 ? 'emoji' : 'glitter';
+        this.emoji = ['✨', '🎈', '🎉', '💖', '🎀'][Math.floor(Math.random() * 5)];
+        this.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+        this.alpha = Math.random() * 0.4 + 0.1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = Math.random() * 0.02 + 0.01;
+      }
+      update() {
+        this.y -= this.speed;
+        this.angle += this.wobbleSpeed;
+        this.x += Math.sin(this.angle) * 0.5;
+        if (this.y < -50) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        if (this.type === 'emoji') {
+          ctx.font = `${this.size}px Arial`;
+          ctx.fillText(this.emoji, this.x, this.y);
+        } else {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size / 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 40; i++) {
+      particles.push(new FloatingItem());
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+    }
+    animate();
   </script>
 </body>
 </html>

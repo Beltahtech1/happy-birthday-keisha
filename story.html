@@ -2,104 +2,358 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Keisha’s Story</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      text-align: center;
-      overflow-x: hidden;
+    :root {
+      --bg: #07070c;
+      --card-bg: rgba(15, 15, 25, 0.65);
+      --border: rgba(255, 64, 129, 0.25);
+      --accent: #ff4081;
+      --accent-glow: rgba(255, 64, 129, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #a1a1aa;
     }
 
-    /* Glitter background */
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Mesh Backdrop */
     body::before {
       content: "";
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
-      background-size: 3px 3px;
-      animation: sparkle 6s linear infinite;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 1400px; height: 100%;
+      background: radial-gradient(circle at 50% 20%, rgba(255, 64, 129, 0.15), transparent 70%);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    #ambientCanvas {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: -1;
-    }
-    @keyframes sparkle {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
+      pointer-events: none;
     }
 
-    h1 { color: #ff4081; margin-top: 30px; font-size: 2.5em; }
+    main {
+      width: 100%;
+      max-width: 680px;
+      padding: 40px 20px 60px 20px;
+      box-sizing: border-box;
+    }
 
-    .story-box {
-      background: rgba(255,255,255,0.1);
-      margin: 30px auto;
-      padding: 30px;
-      border-radius: 20px;
-      width: 80%;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
-      font-size: 1.2em;
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0 0 10px 0;
+      background: linear-gradient(to right, #fff, #ff80ab);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin: 0;
+    }
+
+    /* Timeline Container Architecture */
+    .timeline {
+      position: relative;
+      border-left: 2px dashed var(--border);
+      margin: 10px 10px 40px 20px;
+      padding-left: 30px;
+      text-align: left;
+    }
+
+    .story-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 25px 28px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .story-card:hover {
+      transform: translateX(4px);
+      border-color: var(--accent);
+      box-shadow: 0 0 25px rgba(255, 64, 129, 0.2);
+    }
+
+    /* Interactive Timeline Indicator Nodes */
+    .story-card::before {
+      content: "";
+      position: absolute;
+      left: -41px;
+      top: 28px;
+      width: 20px;
+      height: 20px;
+      background: var(--bg);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      z-index: 2;
+      box-shadow: 0 0 10px var(--accent);
+      transition: background 0.3s ease;
+    }
+    .story-card:hover::before {
+      background: var(--accent);
+    }
+
+    .meta-tag {
+      display: inline-block;
+      background: rgba(255, 64, 129, 0.1);
+      border: 1px solid rgba(255, 64, 129, 0.2);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .story-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .story-card p {
+      font-size: 0.98rem;
       line-height: 1.6;
+      color: #e4e4e7;
+      margin: 0;
     }
 
-    /* Balloons and ribbons */
-    .balloon {
-      position: absolute;
-      bottom: -100px;
-      width: 80px;
-      animation: float 12s infinite ease-in;
+    .location-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px 10px;
+      border-radius: 8px;
     }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-120vh); }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      margin: 0 auto;
     }
-    .ribbon {
-      position: absolute;
-      top: 0;
-      width: 60px;
-      animation: sway 6s infinite ease-in-out;
+    .back-btn:hover {
+      border-color: var(--accent);
+      background: rgba(255, 64, 129, 0.08);
+      box-shadow: 0 0 25px var(--accent-glow);
+      transform: translateY(-2px);
     }
-    @keyframes sway {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(10deg); }
-      100% { transform: rotate(0deg); }
+
+    footer {
+      width: 100%;
+      padding: 24px 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-top: auto;
     }
   </style>
 </head>
 <body>
-  <h1>🌈 Keisha’s First Year Story</h1>
 
-  <div class="story-box">
-    <p>👶 <strong>Born in Juja</strong> — On June 5th, 2025, Keisha arrived, filling Beltah and Staicy’s hearts with joy. Her first cry was the sweetest sound, marking the beginning of a magical journey.</p>
-  </div>
+  <canvas id="ambientCanvas"></canvas>
 
-  <div class="story-box">
-    <p>🍼 <strong>Three Months</strong> — Her smiles lit up our home. Dad Beltah loved singing to her, while Mom Staicy cuddled her endlessly. Every giggle was a melody of happiness.</p>
-  </div>
+  <main>
+    <header>
+      <h1>🌈 Keisha’s Nine-Month Journey</h1>
+      <p>The beautiful steps and stories that led to our perfect miracle</p>
+    </header>
 
-  <div class="story-box">
-    <p>🐻 <strong>Six Months</strong> — Sitting up with her teddy bear, Keisha showed her curious spirit. Beltah cheered her on, and Staicy captured every moment in photos, preserving memories forever.</p>
-  </div>
+    <div class="timeline">
 
-  <div class="story-box">
-    <p>🚶 <strong>Nine Months</strong> — Crawling and exploring, she filled the house with laughter. Dad guided her tiny steps, while Mom encouraged her with claps and kisses. Juja mordern became her playground of discovery.</p>
-  </div>
+      <!-- MONTH 1 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 1</div>
+        <h3>🌱 The Sweet Beginning</h3>
+        <p>This is where our beautiful secret started. Finding out we were expecting you filled our tiny college room with a whole new kind of love. Your mom and I stayed close every single day, listening to your very first tiny heartbeats while balancing classes and endless big dreams for the future.</p>
+        <div class="location-badge">📍 College Campus</div>
+      </div>
 
-  <div class="story-box">
-    <p>🎂 <strong>One Year</strong> — Now, we celebrate her first birthday. Beltah and Staicy look back with gratitude, amazed at how quickly their little miracle has grown. Keisha, you are our sunshine, our rainbow, our joy.</p>
-  </div>
+      <!-- MONTH 2 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 2</div>
+        <h3>🍃 College Cravings & Cuddles</h3>
+        <p>Morning sickness kicked in, and college life became a wild balancing act. Your mom was such a champ, heading to lectures while I made sure she always had her favorite snacks nearby. Every little kick or change made us realize how incredibly real this journey was becoming.</p>
+        <div class="location-badge">📍 College Campus</div>
+      </div>
 
-  <!-- Balloons -->
-  <img src="balloon.png" class="balloon" style="left:10%;" />
-  <img src="balloon.png" class="balloon" style="left:40%;" />
-  <img src="balloon.png" class="balloon" style="left:70%;" />
+      <!-- MONTH 3 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 3</div>
+        <h3>✨ Growing Strong Together</h3>
+        <p>Three months in, and a beautiful little bump started showing. We spent our evenings walking around the campus paths, talking endlessly about who you would look like and dreaming up the perfect name. Holding hands, we knew we could face absolutely anything as long as we stood together.</p>
+        <div class="location-badge">📍 College Campus</div>
+      </div>
 
-  <!-- Ribbons -->
-  <img src="ribbon.png" class="ribbon" style="left:20%;" />
-  <img src="ribbon.png" class="ribbon" style="left:60%;" />
-  <!-- Back button -->
-<a href="index.html" class="back-btn">⬅ Back to Menu</a>
+      <!-- MONTH 4 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 4</div>
+        <h3>🎵 Mid-Semester Melodies</h3>
+        <p>By the fourth month, you could start hearing sounds from the outside world. I used to sing softly to your mom’s belly after finishing late-night study sessions. It was our cozy little routine, making sure you knew our voices before you even entered the world.</p>
+        <div class="location-badge">📍 College Campus</div>
+      </div>
+
+      <!-- MONTH 5 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 5</div>
+        <h3>💝 Our Last Campus Chapter</h3>
+        <p>This was our final milestone together at college. We treasured every single moment of this fifth month, knowing big transitions were coming up next. Your mom was glowing beautifully, and we celebrated finishing this special season of nesting together under one roof.</p>
+        <div class="location-badge">📍 College Campus</div>
+      </div>
+
+      <!-- MONTH 6 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 6</div>
+        <h3>🏡 Back to the Family Nest</h3>
+        <p>To ensure she had the absolute best care and comfort, your mom moved back home with her family. They welcomed her with open arms, cooking her favorite traditional meals and taking sweet care of her every single day while she kept traveling to finish up her remaining college classes.</p>
+        <div class="location-badge">📍 Family Home</div>
+      </div>
+
+      <!-- MONTH 7 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 7</div>
+        <h3>💼 Stepping into Nairobi</h3>
+        <p>While your wonderful grandparents pampered your mom back home, I made a major step and shifted to Nairobi to search for a job. I walked the city streets with fire in my heart, determined to build a beautiful, stable, and warm future for you and your mom.</p>
+        <div class="location-badge">📍 Nairobi City</div>
+      </div>
+
+      <!-- MONTH 8 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 8</div>
+        <h3>📞 Phone Calls & Big Dreams</h3>
+        <p>Distance wasn’t easy, but love kept us connected across the miles. Every single evening, I would call to check on the latest updates from her checkups. Your mom would tell me how much you were kicking, and her family made sure she stayed perfectly safe, relaxed, and happy.</p>
+        <div class="location-badge">📍 Nairobi / Home</div>
+      </div>
+
+      <!-- MONTH 9 -->
+      <div class="story-card">
+        <div class="meta-tag">Month 9</div>
+        <h3>🍼 The Ultimate Miracle Arrives</h3>
+        <p>The long-awaited final days came with so much excitement. Your mom's family kept her safe and prepared until the magical moment arrived on June 5th, 2025. You made your grand entrance in Juja, changing our lives forever! Our sweet princess Keisha was finally here, making every single sacrifice completely worth it.</p>
+        <div class="location-badge">📍 Juja Modern</div>
+      </div>
+
+    </div>
+
+    <div style="text-align: center;">
+      <a href="index.html" class="back-btn">⬅️ Back to Menu</a>
+    </div>
+  </main>
+
+  <footer>
+    CODED SUCCESSFULLY BY BELTAH[cite: 4]
+  </footer>
+
+  <script>
+    // High Performance Smooth Floating Particle Engine
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class FloatingItem {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * canvas.height; 
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.size = Math.random() * 12 + 6;
+        this.speed = Math.random() * 0.8 + 0.4;
+        this.type = Math.random() < 0.35 ? 'emoji' : 'glitter';
+        this.emoji = ['✨', '💖', '👶', '🌸', '🎀'][Math.floor(Math.random() * 5)];
+        this.color = `hsl(${Math.random() * 20 + 330}, 100%, 75%)`; // Pink tints
+        this.alpha = Math.random() * 0.3 + 0.1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = Math.random() * 0.02 + 0.005;
+      }
+      update() {
+        this.y -= this.speed;
+        this.angle += this.wobbleSpeed;
+        this.x += Math.sin(this.angle) * 0.4;
+        if (this.y < -50) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        if (this.type === 'emoji') {
+          ctx.font = `${this.size}px Arial`;
+          ctx.fillText(this.emoji, this.x, this.y);
+        } else {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size / 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 30; i++) {
+      particles.push(new FloatingItem());
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+    }
+    animate();
+  </script>
 </body>
 </html>

@@ -2,192 +2,513 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Surprise!</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      text-align: center;
-      overflow-x: hidden;
+    :root {
+      --bg: #07070c;
+      --card-bg: rgba(15, 15, 25, 0.65);
+      --border: rgba(255, 64, 129, 0.3);
+      --accent: #ff4081;
+      --accent-glow: rgba(255, 64, 129, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #a1a1aa;
     }
 
-    /* Glitter background */
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      text-align: center;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Mesh Glow Backdrop */
     body::before {
       content: "";
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
-      background-size: 3px 3px;
-      animation: sparkle 6s linear infinite;
-      z-index: -1;
-    }
-    @keyframes sparkle {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 1400px; height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(255, 64, 129, 0.2), transparent 60%);
+      z-index: -2;
+      pointer-events: none;
     }
 
-    h1 { color: #ff4081; margin-top: 30px; font-size: 3em; }
+    #ambientCanvas {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 800px;
+      padding: 40px 20px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0 0 10px 0;
+      background: linear-gradient(to right, #fff, #ff80ab);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    /* Modern 3D Gift Grid System Layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 480px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
 
     .surprise-box {
-      display: inline-block;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 35px 20px;
+      font-size: 1.1rem;
+      font-weight: 700;
       cursor: pointer;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .surprise-box .gift-icon {
+      font-size: 2.5rem;
       transition: transform 0.3s ease;
     }
+
     .surprise-box:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px #fff, 0 0 60px #ff4081;
+      transform: translateY(-5px) scale(1.03);
+      border-color: var(--accent);
+      box-shadow: 0 15px 35px rgba(255, 64, 129, 0.3), 0 0 15px var(--accent-glow);
     }
 
-    /* Back button */
-    .back-btn {
-      display: inline-block;
-      margin: 30px auto;
-      padding: 14px 28px;
-      border-radius: 35px;
-      background: linear-gradient(45deg, #ff4081, #ff80ab, #ffc1e3);
-      color: white;
-      font-weight: bold;
+    .surprise-box:hover .gift-icon {
+      transform: rotate(15deg) scale(1.1);
+    }
+
+    /* Opened State Variant Styling */
+    .surprise-box.opened {
+      border-color: #00e676;
+      background: rgba(0, 230, 118, 0.05);
+      box-shadow: 0 5px 15px rgba(0, 230, 118, 0.1);
+      cursor: default;
+      transform: none !important;
+    }
+
+    .surprise-box.opened .gift-icon {
+      transform: scale(0.9);
+      opacity: 0.5;
+    }
+
+    /* Modal Reveal Window Layer Components */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(7, 7, 12, 0.85);
+      backdrop-filter: blur(15px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #12121d;
+      border: 2px solid var(--accent);
+      border-radius: 32px;
+      padding: 40px 30px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 25px 60px rgba(255, 64, 129, 0.4);
+      transform: scale(0.85);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+    }
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-content h3 {
+      font-size: 1.5rem;
+      margin: 0 0 15px 0;
+      color: #fff;
+    }
+
+    .modal-content p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin: 0 0 25px 0;
+    }
+
+    /* Interactive Smooth Action Controls */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
       text-decoration: none;
-      box-shadow: 0 0 15px #ff4081, 0 0 30px #ff80ab, 0 0 45px #ffc1e3;
-      transition: all 0.4s ease;
+    }
+
+    .close-btn {
+      background: linear-gradient(45deg, #ff4081, #ff80ab);
+      color: #fff;
+      box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
+    }
+    .close-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 64, 129, 0.5);
+    }
+
+    /* Immersive Grand Finale Hero Panel Card Component */
+    .finale-card {
+      background: linear-gradient(135deg, rgba(255, 64, 129, 0.15), rgba(15, 15, 25, 0.8));
+      border: 2px solid var(--accent);
+      border-radius: 32px;
+      padding: 45px 35px;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+      backdrop-filter: blur(25px);
+      box-shadow: 0 0 40px rgba(255, 64, 129, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.05);
+      margin-top: 15px;
+      animation: finaleEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes finaleEntrance {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(10px); }
+      to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    .finale-card h2 {
+      margin: 0 0 15px 0;
+      font-size: 1.8rem;
+      background: linear-gradient(to right, #fff, #ffd54f, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulsingGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulsingGlow {
+      0%, 100% { filter: drop-shadow(0 0 2px var(--accent)); }
+      50% { filter: drop-shadow(0 0 12px var(--accent)); }
+    }
+
+    .finale-card p {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: #f3f4f6;
+      margin: 0;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: #fff;
+      margin-top: 30px;
     }
     .back-btn:hover {
-      box-shadow: 0 0 25px #fff, 0 0 50px #ff4081, 0 0 70px #ff80ab;
-      transform: scale(1.08);
+      border-color: var(--accent);
+      background: rgba(255, 64, 129, 0.08);
+      box-shadow: 0 0 25px var(--accent-glow);
+      transform: translateY(-2px);
     }
 
-    /* Balloons and ribbons */
-    .balloon {
-      position: absolute;
-      bottom: -100px;
-      width: 80px;
-      animation: float 12s infinite ease-in;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-120vh); }
-    }
-    .ribbon {
-      position: absolute;
-      top: 0;
-      width: 60px;
-      animation: sway 6s infinite ease-in-out;
-    }
-    @keyframes sway {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(10deg); }
-      100% { transform: rotate(0deg); }
-    }
+    .hidden { display: none !important; }
 
-    /* Glitter pop effect */
-    .glitter {
+    /* Custom Particle Styles */
+    .particle {
       position: fixed;
-      width: 10px;
-      height: 10px;
-      background: #ff4081;
-      animation: pop 2s linear forwards;
-    }
-    @keyframes pop {
-      to { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-    }
-
-    /* Fireworks finale */
-    .firework {
-      position: fixed;
-      width: 5px;
-      height: 5px;
+      pointer-events: none;
       border-radius: 50%;
-      background: #fff;
-      animation: explode 1.5s ease-out forwards;
+      z-index: 200;
     }
-    @keyframes explode {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(20); opacity: 0; }
+
+    footer {
+      width: 100%;
+      padding: 24px 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.05em;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>🎉 Surprise, Keisha!</h1>
-  <p>Click a box to reveal a sparkling surprise!</p>
 
-  <div class="surprise-box" onclick="showSurprise(0,'🎂 Happy Birthday, Keisha! 💖')">Surprise 1</div>
-  <div class="surprise-box" onclick="showSurprise(1,'🌈 You are our rainbow, Keisha!')">Surprise 2</div>
-  <div class="surprise-box" onclick="showSurprise(2,'🎁 Beltah & Staicy love you forever!')">Surprise 3</div>
-  <div class="surprise-box" onclick="showSurprise(3,'✨ May your life always sparkle!')">Surprise 4</div>
+  <canvas id="ambientCanvas"></canvas>
 
-  <!-- Grand Finale (hidden until all clicked) -->
-  <div id="finale" class="hidden card">
-    <h2>🎆 Grand Finale 🎆</h2>
-    <p>Keisha, you are the brightest star in our lives. Happy Birthday from Dad Beltah and Mom Staicy!</p>
-    <iframe id="finaleMusic" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+  <main>
+    <h1>🎉 Surprise, Keisha![cite: 5]</h1>
+    <p class="subtitle">Click a box to reveal a sparkling surprise![cite: 5]</p>
+
+    <div class="grid-container" id="giftsGrid">
+      <div class="surprise-box" onclick="revealSurprise(0, '🎁 Surprise 1', '🎂 Happy Birthday, Keisha! 💖')">
+        <span class="gift-icon">🎁</span>
+        <span>Box One</span>
+      </div>
+      <div class="surprise-box" onclick="revealSurprise(1, '🌈 Surprise 2', '🌈 You are our rainbow, Keisha!')">
+        <span class="gift-icon">💝</span>
+        <span>Box Two</span>
+      </div>
+      <div class="surprise-box" onclick="revealSurprise(2, '✨ Surprise 3', '🎁 Beltah & Staicy love you forever!')">
+        <span class="gift-icon">⭐</span>
+        <span>Box Three</span>
+      </div>
+      <div class="surprise-box" onclick="revealSurprise(3, '👑 Surprise 4', '✨ May your life always sparkle!')">
+        <span class="gift-icon">👑</span>
+        <span>Box Four</span>
+      </div>
+    </div>
+
+    <!-- Grand Finale Content Component -->
+    <div id="finale" class="hidden finale-card">
+      <h2>🎆 Grand Finale 🎆[cite: 5]</h2>
+      <p>Keisha, you are the brightest star in our lives. Happy Birthday from Dad Beltah and Mom Staicy![cite: 5]</p>
+      <iframe id="finaleMusic" width="0" height="0" src="" frameborder="0" allow="autoplay" class="hidden"></iframe>
+    </div>
+
+    <a href="index.html" class="action-btn back-btn">⬅ Back to Menu</a>
+  </main>
+
+  <!-- Interactive Dynamic Reveal Window Modal System Component -->
+  <div class="modal-overlay" id="surpriseModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Surprise</h3>
+      <p id="modalMessage">Message content goes here.</p>
+      <button class="action-btn close-btn" onclick="closeModal()">Awesome ✨</button>
+    </div>
   </div>
 
-  <!-- Back button -->
-  <a href="index.html" class="back-btn">⬅ Back to Menu</a>
-
-  <!-- Balloons -->
-  <img src="balloon.png" class="balloon" style="left:10%;" />
-  <img src="balloon.png" class="balloon" style="left:40%;" />
-  <img src="balloon.png" class="balloon" style="left:70%;" />
-
-  <!-- Ribbons -->
-  <img src="ribbon.png" class="ribbon" style="left:20%;" />
-  <img src="ribbon.png" class="ribbon" style="left:60%;" />
+  <footer>
+    CODED SUCCESSFULLY BY BELTAH
+  </footer>
 
   <script>
-    let clicked = [false, false, false, false];
+    let clicked = [false, false, false, false];[cite: 5]
 
-    function showSurprise(index, message) {
-      alert(message);
-      clicked[index] = true;
-      launchGlitter();
+    function revealSurprise(index, title, message) {
+      if (clicked[index]) return; // Stop re-triggering once opened
+      
+      clicked[index] = true;[cite: 5]
+      
+      // Update UI state securely
+      const boxes = document.querySelectorAll('.surprise-box');
+      boxes[index].classList.add('opened');
+      
+      // Spawn explosive particles directly around current box interaction zone
+      const rect = boxes[index].getBoundingClientRect();
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height / 2;
+      spawnBurst(originX, originY, 40);
 
-      if (clicked.every(val => val)) {
-        document.getElementById("finale").classList.remove("hidden");
-        launchFireworks();
-        playFinaleMusic();
+      // Delayed Modal Presentation Window launch
+      setTimeout(() => {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalMessage').innerText = message;
+        document.getElementById('surpriseModal').classList.add('active');
+      }, 300);
+
+      // Verify and process Grand Finale triggers setup
+      if (clicked.every(val => val)) {[cite: 5]
+        setTimeout(() => {
+          document.getElementById("giftsGrid").classList.add("hidden");
+          document.getElementById("finale").classList.remove("hidden");[cite: 5]
+          triggerContinuousFinaleExplosions();
+          playFinaleMusic();[cite: 5]
+        }, 1200);
       }
     }
 
-    function launchGlitter() {
-      for (let i = 0; i < 50; i++) {
-        const glitter = document.createElement("div");
-        glitter.className = "glitter";
-        glitter.style.left = Math.random() * window.innerWidth + "px";
-        glitter.style.top = Math.random() * window.innerHeight + "px";
-        glitter.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
-        document.body.appendChild(glitter);
-        setTimeout(() => glitter.remove(), 2000);
-      }
-    }
-
-    function launchFireworks() {
-      for (let i = 0; i < 20; i++) {
-        const fw = document.createElement("div");
-        fw.className = "firework";
-        fw.style.left = Math.random() * window.innerWidth + "px";
-        fw.style.top = Math.random() * window.innerHeight + "px";
-        fw.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
-        document.body.appendChild(fw);
-        setTimeout(() => fw.remove(), 1500);
-      }
+    function closeModal() {
+      document.getElementById('surpriseModal').classList.remove('active');
     }
 
     function playFinaleMusic() {
-      // Replace YOUR_VIDEO_ID with the actual YouTube video ID
-      const musicFrame = document.getElementById("finaleMusic");
-      musicFrame.src = "https://www.youtube.com/embed/020g-0hhCAU?autoplay=1&loop=1&playlist=020g-0hhCAU";
+      const musicFrame = document.getElementById("finaleMusic");[cite: 5]
+      musicFrame.src = "https://www.youtube.com/embed/020g-0hhCAU?autoplay=1&loop=1&playlist=020g-0hhCAU";[cite: 5]
     }
+
+    // High Performance Vector Burst Animation Pipeline
+    function spawnBurst(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'particle';
+        
+        const size = Math.random() * 8 + 4;
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+        el.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 65%)`;
+        
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        
+        document.body.appendChild(el);
+
+        // Vector directional speeds setup
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 8 + 4;
+        let vx = Math.cos(angle) * velocity;
+        let vy = Math.sin(angle) * velocity;
+        let posX = x;
+        let posY = y;
+        let opacity = 1;
+
+        function updateParticle() {
+          if (opacity <= 0.02) {
+            el.remove();
+            return;
+          }
+          vy += 0.18; // Apply clean gravity values
+          posX += vx;
+          posY += vy;
+          opacity -= 0.02;
+          
+          el.style.left = `${posX}px`;
+          el.style.top = `${posY}px`;
+          el.style.opacity = opacity;
+          
+          requestAnimationFrame(updateParticle);
+        }
+        requestAnimationFrame(updateParticle);
+      }
+    }
+
+    function triggerContinuousFinaleExplosions() {
+      let runCount = 0;
+      const interval = setInterval(() => {
+        if (runCount > 15) {
+          clearInterval(interval);
+          return;
+        }
+        const rx = Math.random() * window.innerWidth;
+        const ry = Math.random() * (window.innerHeight * 0.7);
+        spawnBurst(rx, ry, 35);
+        runCount++;
+      }, 400);
+    }
+
+    // Ambient space visual particle canvas initialization
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class FloatingItem {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * canvas.height; 
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.size = Math.random() * 12 + 6;
+        this.speed = Math.random() * 0.8 + 0.4;
+        this.type = Math.random() < 0.35 ? 'emoji' : 'glitter';
+        this.emoji = ['✨', '🎈', '🎉', '💖', '🎀'][Math.floor(Math.random() * 5)];
+        this.color = `hsl(${Math.random() * 40 + 320}, 100%, 75%)`;
+        this.alpha = Math.random() * 0.3 + 0.1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = Math.random() * 0.02 + 0.005;
+      }
+      update() {
+        this.y -= this.speed;
+        this.angle += this.wobbleSpeed;
+        this.x += Math.sin(this.angle) * 0.4;
+        if (this.y < -50) this.reset();
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        if (this.type === 'emoji') {
+          ctx.font = `${this.size}px Arial`;
+          ctx.fillText(this.emoji, this.x, this.y);
+        } else {
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size / 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 30; i++) {
+      particles.push(new FloatingItem());
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+    }
+    animate();
   </script>
 </body>
 </html>

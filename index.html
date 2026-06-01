@@ -7,12 +7,12 @@
   <style>
     :root {
       --bg: #07070c;
-      --card-bg: rgba(255, 255, 255, 0.02);
-      --border: rgba(255, 255, 255, 0.08);
+      --card-bg: rgba(15, 15, 25, 0.65);
+      --border: rgba(255, 64, 129, 0.3);
       --accent: #ff4081;
-      --accent-glow: rgba(255, 64, 129, 0.3);
+      --accent-glow: rgba(255, 64, 129, 0.4);
       --text-main: #f3f4f6;
-      --text-muted: #a1a1aa;
+      --text-muted: #d1d1d6;
     }
 
     body {
@@ -30,23 +30,55 @@
       position: relative;
     }
 
-    /* Ambient Glow Behind Content */
+    /* Ambient Mesh Glow Behind Content */
     body::before {
       content: "";
       position: fixed;
       top: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 1400px; height: 100%;
-      background: radial-gradient(circle at 50% 25%, rgba(255, 64, 129, 0.15), transparent 60%);
+      background: radial-gradient(circle at 50% 25%, rgba(255, 64, 129, 0.2), transparent 60%);
       z-index: -2;
       pointer-events: none;
     }
 
-    /* Full-Screen Effects Canvas */
+    /* Full-Screen FX Space Layer */
     #fxCanvas {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: 999;
       pointer-events: none;
+    }
+
+    /* Background Ambient Moving Particles */
+    .ambient-layer {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; pointer-events: none;
+    }
+    .ambient-item {
+      position: absolute;
+      font-size: 1.2rem;
+      opacity: 0.25;
+    }
+    .ambient-up {
+      bottom: -50px;
+      animation: riseUp 14s infinite linear;
+    }
+    .ambient-down {
+      top: -50px;
+      animation: fallDown 14s infinite linear;
+    }
+    @keyframes riseUp {
+      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.35; }
+      90% { opacity: 0.35; }
+      100% { transform: translateY(-115vh) translateX(40px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes fallDown {
+      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.35; }
+      90% { opacity: 0.35; }
+      100% { transform: translateY(115vh) translateX(-40px) rotate(-360deg); opacity: 0; }
     }
 
     main {
@@ -60,7 +92,7 @@
       box-sizing: border-box;
     }
 
-    /* Premium Circular Avatar Display */
+    /* Premium Circular Avatar Display Component */
     .avatar-container {
       width: 160px;
       height: 160px;
@@ -72,10 +104,10 @@
       top: -6px; left: -6px; right: -6px; bottom: -6px;
       border-radius: 50%;
       background: linear-gradient(45deg, var(--accent), #ff80ab, #ffc1e3);
-      animation: spin 8s linear infinite;
+      animation: spinAvatar 8s linear infinite;
       z-index: 1;
     }
-    @keyframes spin {
+    @keyframes spinAvatar {
       100% { transform: rotate(360deg); }
     }
     .avatar-inner {
@@ -94,13 +126,13 @@
 
     .card {
       background: var(--card-bg);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       border-radius: 32px;
       padding: 40px 30px;
       width: 100%;
       max-width: 540px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(25px);
+      box-shadow: 0 0 30px rgba(255, 64, 129, 0.25), inset 0 0 15px rgba(255, 255, 255, 0.05);
       box-sizing: border-box;
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
@@ -115,43 +147,50 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Stylish Calendar Selection System */
+    /* Highly Visible Custom Neon Calendar Component Layout */
     .calendar-select {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 14px;
       margin: 35px 0;
     }
     .select-wrapper {
       position: relative;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
+      background: rgba(20, 20, 35, 0.9);
+      border: 2px solid #ff4081;
       border-radius: 16px;
+      box-shadow: 0 0 12px rgba(255, 64, 129, 0.3);
       transition: all 0.3s ease;
     }
     .select-wrapper:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 15px rgba(255, 64, 129, 0.15);
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
     }
     select {
       width: 100%;
       background: transparent;
       border: none;
-      color: #fff;
-      padding: 16px;
-      font-size: 0.95rem;
-      font-weight: 600;
+      color: #ffffff;
+      padding: 16px 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
       outline: none;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
       text-align: center;
     }
+    /* Style select options for cross-browser visibility */
+    select option {
+      background-color: #141423;
+      color: #ffffff;
+      font-weight: 600;
+    }
 
     textarea {
       width: 100%;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
+      background: rgba(15, 15, 25, 0.85);
+      border: 2px solid var(--border);
       border-radius: 16px;
       color: #fff;
       padding: 16px;
@@ -162,15 +201,15 @@
       font-size: 0.95rem;
     }
 
-    /* Premium Fluid Buttons */
+    /* Dynamic Fluid Interactive Buttons Component Layout */
     button, nav a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 16px 36px;
       border-radius: 100px;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 1rem;
       text-decoration: none;
       border: none;
       cursor: pointer;
@@ -178,14 +217,15 @@
     }
 
     .btn-action {
-      background: #ffffff;
-      color: #000000;
+      background: linear-gradient(45deg, #ff4081, #ff80ab);
+      color: #ffffff;
       width: 100%;
       box-sizing: border-box;
+      box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
     }
     .btn-action:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(255, 255, 255, 0.25);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(255, 64, 129, 0.7), 0 0 15px #fff;
     }
 
     nav {
@@ -196,18 +236,18 @@
       width: 100%;
     }
     nav a {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       color: #fff;
     }
     nav a:hover {
       border-color: var(--accent);
-      background: rgba(255, 64, 129, 0.04);
+      background: rgba(255, 64, 129, 0.08);
       box-shadow: 0 0 25px var(--accent-glow);
       transform: translateY(-3px);
     }
 
-    /* Minimalist Digital Clock Displays */
+    /* Flip-Clock Digital Layout Panel Component */
     .countdown-grid {
       display: flex;
       gap: 12px;
@@ -248,39 +288,54 @@
 </head>
 <body>
 
-  <!-- FX Animation Layer -->
+  <!-- FX Animation Space Layer Canvas -->
   <canvas id="fxCanvas"></canvas>
 
+  <!-- Ambient Floating Layer: Rising and Falling Glitters and Ribbons -->
+  <div class="ambient-layer">
+    <div class="ambient-item ambient-up" style="left: 5%; animation-delay: 0s;">✨</div>
+    <div class="ambient-item ambient-up" style="left: 25%; animation-delay: 4s;">🎉</div>
+    <div class="ambient-item ambient-up" style="left: 45%; animation-delay: 1s;">✨</div>
+    <div class="ambient-item ambient-up" style="left: 65%; animation-delay: 6s;">🎀</div>
+    <div class="ambient-item ambient-up" style="left: 85%; animation-delay: 3s;">✨</div>
+    
+    <div class="ambient-item ambient-down" style="left: 15%; animation-delay: 2s;">✨</div>
+    <div class="ambient-item ambient-down" style="left: 35%; animation-delay: 7s;">🎀</div>
+    <div class="ambient-item ambient-down" style="left: 55%; animation-delay: 0s;">✨</div>
+    <div class="ambient-item ambient-down" style="left: 75%; animation-delay: 5s;">🎉</div>
+    <div class="ambient-item ambient-down" style="left: 95%; animation-delay: 3s;">✨</div>
+  </div>
+
   <main>
-    <!-- Dynamic Circular Avatar Display Component -->
+    <!-- Dynamic Circular Avatar Component -->
     <div class="avatar-container">
       <div class="avatar-ring"></div>
       <div class="avatar-inner">
-        <!-- ADD KEISHA'S DIRECT IMAGE LINK IN THE SRC FILLER BELOW -->
         <img src="https://files.catbox.moe/mpmubr.jpeg" alt="Keisha">
       </div>
     </div>
 
-    <!-- Verification Card Frame -->
+    <!-- Target Date Validation Selector Panel -->
     <div id="verification" class="card">
       <h1>🎂 Keisha's Birthday</h1>
       <p style="color: var(--text-muted); margin: 0;">Unlock her automated milestone celebration:</p>
       
       <div class="calendar-select">
         <div class="select-wrapper">
-          <select id="year">
+          <select id="year" onchange="populateDays()">
+            <!-- Bound target selector limit dynamically down to requested 2010 -->
             <script>
-              for (let y = 2026; y >= 2018; y--) {
+              for (let y = 2026; y >= 2010; y--) {
                 document.write(`<option value="${y}">${y}</option>`);
               }
             </script>
           </select>
         </div>
         <div class="select-wrapper">
-          <select id="month">
+          <select id="month" onchange="populateDays()">
             <option value="01">Jan</option><option value="02">Feb</option>
             <option value="03">Mar</option><option value="04">Apr</option>
-            <option value="05">May</option><option value="06" selected>Jun</option>
+            <option value="05">May</option><option value="06">Jun</option>
             <option value="07">Jul</option><option value="08">Aug</option>
             <option value="09">Sep</option><option value="10">Oct</option>
             <option value="11">Nov</option><option value="12">Dec</option>
@@ -288,12 +343,7 @@
         </div>
         <div class="select-wrapper">
           <select id="day">
-            <script>
-              for (let d = 1; d <= 31; d++) {
-                let selected = d === 5 ? 'selected' : '';
-                document.write(`<option value="${String(d).padStart(2,'0')}" ${selected}>${d}</option>`);
-              }
-            </script>
+            <!-- Populated via script to map custom calendar range requirements -->
           </select>
         </div>
       </div>
@@ -308,7 +358,7 @@
       </div>
     </div>
 
-    <!-- Main View Dashboard Panel Frame -->
+    <!-- Main Dynamic Application Dashboard -->
     <div id="mainContent" class="hidden card">
       <h1 id="celebrationHeader">🎉 Loading Milestone...</h1>
       <p id="targetStatus" style="color: var(--text-muted); margin: 0; font-size: 0.95rem;"></p>
@@ -336,14 +386,62 @@
   </footer>
 
   <script>
-    // Live Character Counter Event Listener
+    // Map custom dynamic day constraint rules to calendar frame limits (2010/JAN/06 - 2026/DEC/27)
+    function populateDays() {
+      const yearSelect = document.getElementById("year");
+      const monthSelect = document.getElementById("month");
+      const daySelect = document.getElementById("day");
+      
+      const selectedYear = parseInt(yearSelect.value);
+      const selectedMonth = parseInt(monthSelect.value);
+      
+      let startDay = 1;
+      let endDay = new Date(selectedYear, selectedMonth, 0).getDate();
+      
+      // Constraint implementation for 2010 boundary rules
+      if (selectedYear === 2010) {
+        if (selectedMonth === 1) {
+          startDay = 6;
+        }
+      }
+      
+      // Constraint implementation for 2026 boundary rules
+      if (selectedYear === 2026) {
+        if (selectedMonth === 12) {
+          endDay = 27;
+        }
+      }
+      
+      const currentSelectedDay = daySelect.value;
+      daySelect.innerHTML = "";
+      
+      for (let d = startDay; d <= endDay; d++) {
+        const val = String(d).padStart(2, '0');
+        const option = document.createElement("option");
+        option.value = val;
+        option.text = d;
+        if (val === currentSelectedDay) {
+          option.selected = true;
+        }
+        daySelect.appendChild(option);
+      }
+    }
+
+    // Run dynamic mapping calculations instantly on interface assembly initialization
+    document.getElementById("year").value = "2026";
+    document.getElementById("month").value = "06";
+    populateDays();
+    document.getElementById("day").value = "05";
+
+    // Track input character changes inside string space array allocations
     document.getElementById("wishInput").addEventListener("input", function() {
       document.getElementById("charCount").innerText = `${this.value.length} / 100`;
     });
 
     function checkBirthday() {
       const input = `${document.getElementById("year").value}-${document.getElementById("month").value}-${document.getElementById("day").value}`;
-      if (input === "2025-06-05") {
+      // Map custom required sequence validation key configuration (05/JUNE/2026)
+      if (input === "2026-06-05") {
         triggerCelebrationUnlock();
       } else {
         document.getElementById("wishSection").classList.remove("hidden");
@@ -358,7 +456,7 @@
       }
     }
 
-    // High Performance FX Engine
+    // High Performance Vector FX Engine Core Framework 
     const canvas = document.getElementById('fxCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -390,7 +488,7 @@
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        if (this.type === 'firework') this.vy += 0.04; // Gravity impact
+        if (this.type === 'firework') this.vy += 0.04; 
         this.alpha -= this.decay;
         this.rotation += this.rotSpeed;
       }
@@ -437,7 +535,7 @@
       animateFX();
       playMusic();
 
-      // Smooth modern transition sequence layout changes
+      // Smooth structural content transitions layout changes
       document.getElementById("verification").style.opacity = "0";
       document.getElementById("verification").style.transform = "scale(0.9)";
       
@@ -454,7 +552,6 @@
         }, 50);
       }, 400);
 
-      // Stop automated firework launches after 6 seconds to optimize compute allocation
       setTimeout(() => { runFX = false; }, 6000);
     }
 
@@ -467,7 +564,7 @@
     }
 
     function runInfiniteEngine() {
-      const birthYear = 2025;
+      const birthYear = 2025; // Original reference marker points back to original 2025 birth point
       
       setInterval(() => {
         const now = new Date();

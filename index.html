@@ -180,7 +180,6 @@
       -webkit-appearance: none;
       text-align: center;
     }
-    /* Style select options for cross-browser visibility */
     select option {
       background-color: #141423;
       color: #ffffff;
@@ -323,7 +322,6 @@
       <div class="calendar-select">
         <div class="select-wrapper">
           <select id="year" onchange="populateDays()">
-            <!-- Bound target selector limit dynamically down to requested 2010 -->
             <script>
               for (let y = 2026; y >= 2010; y--) {
                 document.write(`<option value="${y}">${y}</option>`);
@@ -343,7 +341,6 @@
         </div>
         <div class="select-wrapper">
           <select id="day">
-            <!-- Populated via script to map custom calendar range requirements -->
           </select>
         </div>
       </div>
@@ -386,7 +383,6 @@
   </footer>
 
   <script>
-    // Map custom dynamic day constraint rules to calendar frame limits (2010/JAN/06 - 2026/DEC/27)
     function populateDays() {
       const yearSelect = document.getElementById("year");
       const monthSelect = document.getElementById("month");
@@ -398,18 +394,11 @@
       let startDay = 1;
       let endDay = new Date(selectedYear, selectedMonth, 0).getDate();
       
-      // Constraint implementation for 2010 boundary rules
-      if (selectedYear === 2010) {
-        if (selectedMonth === 1) {
-          startDay = 6;
-        }
+      if (selectedYear === 2010 && selectedMonth === 1) {
+        startDay = 6;
       }
-      
-      // Constraint implementation for 2026 boundary rules
-      if (selectedYear === 2026) {
-        if (selectedMonth === 12) {
-          endDay = 27;
-        }
+      if (selectedYear === 2026 && selectedMonth === 12) {
+        endDay = 27;
       }
       
       const currentSelectedDay = daySelect.value;
@@ -427,21 +416,30 @@
       }
     }
 
-    // Run dynamic mapping calculations instantly on interface assembly initialization
-    document.getElementById("year").value = "2026";
-    document.getElementById("month").value = "06";
-    populateDays();
-    document.getElementById("day").value = "05";
+    // Persist session state across page redirects using SessionStorage
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById("year").value = "2026";
+      document.getElementById("month").value = "06";
+      populateDays();
+      document.getElementById("day").value = "05";
 
-    // Track input character changes inside string space array allocations
+      if (sessionStorage.getItem("keishaUnlocked") === "true") {
+        document.getElementById("verification").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+        document.getElementById("mainContent").style.opacity = "1";
+        document.getElementById("mainContent").style.transform = "scale(1)";
+        runInfiniteEngine();
+        playMusic();
+      }
+    });
+
     document.getElementById("wishInput").addEventListener("input", function() {
       document.getElementById("charCount").innerText = `${this.value.length} / 100`;
     });
 
     function checkBirthday() {
       const input = `${document.getElementById("year").value}-${document.getElementById("month").value}-${document.getElementById("day").value}`;
-      // Map custom required sequence validation key configuration (05/JUNE/2026)
-      if (input === "2026-06-05") {
+      if (input === "2010-02-07") {
         triggerCelebrationUnlock();
       } else {
         document.getElementById("wishSection").classList.remove("hidden");
@@ -456,7 +454,7 @@
       }
     }
 
-    // High Performance Vector FX Engine Core Framework 
+    // FX Engine
     const canvas = document.getElementById('fxCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -471,9 +469,7 @@
 
     class CelebrationParticle {
       constructor(x, y, type) {
-        this.x = x;
-        this.y = y;
-        this.type = type; // 'firework' or 'ribbon'
+        this.x = x; this.y = y; this.type = type;
         this.radius = type === 'firework' ? Math.random() * 3 + 1 : Math.random() * 4 + 2;
         this.angle = Math.random() * Math.PI * 2;
         this.speed = type === 'firework' ? Math.random() * 6 + 2 : Math.random() * 3 + 1;
@@ -486,23 +482,16 @@
         this.rotSpeed = Math.random() * 4 - 2;
       }
       update() {
-        this.x += this.vx;
-        this.y += this.vy;
+        this.x += this.vx; this.y += this.vy;
         if (this.type === 'firework') this.vy += 0.04; 
-        this.alpha -= this.decay;
-        this.rotation += this.rotSpeed;
+        this.alpha -= this.decay; this.rotation += this.rotSpeed;
       }
       draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
+        ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
         if (this.type === 'firework') {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill();
         } else {
-          ctx.translate(this.x, this.y);
-          ctx.rotate(this.rotation * Math.PI / 180);
+          ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI / 180);
           ctx.fillRect(-this.radius, -this.radius / 3, this.radius * 2, this.radius / 1.5);
         }
         ctx.restore();
@@ -516,26 +505,23 @@
 
     function animateFX() {
       if (!runFX && particles.length === 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height); return;
       }
       requestAnimationFrame(animateFX);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       if (runFX && Math.random() < 0.08) {
         createExplosion(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6));
       }
-
       particles = particles.filter(p => p.alpha > 0);
       particles.forEach(p => { p.update(); p.draw(); });
     }
 
     function triggerCelebrationUnlock() {
+      sessionStorage.setItem("keishaUnlocked", "true");
       runFX = true;
       animateFX();
       playMusic();
 
-      // Smooth structural content transitions layout changes
       document.getElementById("verification").style.opacity = "0";
       document.getElementById("verification").style.transform = "scale(0.9)";
       
@@ -564,7 +550,7 @@
     }
 
     function runInfiniteEngine() {
-      const birthYear = 2025; // Original reference marker points back to original 2025 birth point
+      const birthYear = 2025;
       
       setInterval(() => {
         const now = new Date();

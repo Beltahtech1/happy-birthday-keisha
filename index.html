@@ -30,7 +30,6 @@
       position: relative;
     }
 
-    /* Ambient Mesh Glow Behind Content */
     body::before {
       content: "";
       position: fixed;
@@ -41,7 +40,6 @@
       pointer-events: none;
     }
 
-    /* Full-Screen FX Space Layer */
     #fxCanvas {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -49,7 +47,6 @@
       pointer-events: none;
     }
 
-    /* Background Ambient Moving Particles */
     .ambient-layer {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -81,6 +78,33 @@
       100% { transform: translateY(115vh) translateX(-40px) rotate(-360deg); opacity: 0; }
     }
 
+    /* Fixed Top Right Header Controls */
+    .header-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .btn-lock {
+      background: rgba(255, 64, 129, 0.15);
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 64, 129, 0.2);
+    }
+    .btn-lock:hover {
+      background: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
     main {
       flex: 1;
       display: flex;
@@ -92,7 +116,6 @@
       box-sizing: border-box;
     }
 
-    /* Premium Circular Avatar Display Component */
     .avatar-container {
       width: 160px;
       height: 160px;
@@ -147,7 +170,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Highly Visible Custom Neon Calendar Component Layout */
     .calendar-select {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -200,7 +222,6 @@
       font-size: 0.95rem;
     }
 
-    /* Dynamic Fluid Interactive Buttons Component Layout */
     button, nav a {
       display: inline-flex;
       align-items: center;
@@ -246,12 +267,11 @@
       transform: translateY(-3px);
     }
 
-    /* Flip-Clock Digital Layout Panel Component */
     .countdown-grid {
       display: flex;
       gap: 12px;
       justify-content: center;
-      margin: 35px 0;
+      margin: 35px 0 25px 0;
     }
     .time-block {
       background: rgba(255, 255, 255, 0.03);
@@ -273,6 +293,50 @@
       letter-spacing: 0.05em;
     }
 
+    /* Premium Dynamic Typing Dad Message Display Frame Components */
+    .dad-message-box {
+      margin-top: 30px;
+      padding: 24px;
+      background: rgba(255, 64, 129, 0.03);
+      border: 2px dashed rgba(255, 64, 129, 0.4);
+      border-radius: 20px;
+      text-align: left;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(255, 64, 129, 0.05);
+    }
+    .dad-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dad-text {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #f3f4f6;
+      margin: 0;
+      min-height: 60px;
+    }
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1rem;
+      background-color: var(--accent);
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
     .hidden { display: none !important; }
 
     footer {
@@ -287,10 +351,13 @@
 </head>
 <body>
 
-  <!-- FX Animation Space Layer Canvas -->
+  <!-- Dynamic Control Overlay Area -->
+  <div id="headerControls" class="header-controls hidden">
+    <button class="btn-lock" onclick="lockTimelineHub()">🔒 Back</button>
+  </div>
+
   <canvas id="fxCanvas"></canvas>
 
-  <!-- Ambient Floating Layer: Rising and Falling Glitters and Ribbons -->
   <div class="ambient-layer">
     <div class="ambient-item ambient-up" style="left: 5%; animation-delay: 0s;">✨</div>
     <div class="ambient-item ambient-up" style="left: 25%; animation-delay: 4s;">🎉</div>
@@ -306,7 +373,6 @@
   </div>
 
   <main>
-    <!-- Dynamic Circular Avatar Component -->
     <div class="avatar-container">
       <div class="avatar-ring"></div>
       <div class="avatar-inner">
@@ -314,7 +380,7 @@
       </div>
     </div>
 
-    <!-- Target Date Validation Selector Panel -->
+    <!-- Verification Card -->
     <div id="verification" class="card">
       <h1>🎂 Keisha's Birthday</h1>
       <p style="color: var(--text-muted); margin: 0;">Unlock her automated milestone celebration:</p>
@@ -355,7 +421,7 @@
       </div>
     </div>
 
-    <!-- Main Dynamic Application Dashboard -->
+    <!-- Main View Dashboard Panel -->
     <div id="mainContent" class="hidden card">
       <h1 id="celebrationHeader">🎉 Loading Milestone...</h1>
       <p id="targetStatus" style="color: var(--text-muted); margin: 0; font-size: 0.95rem;"></p>
@@ -373,6 +439,12 @@
         <a href="letter.html">💌 Letters</a>
         <a href="surprise.html">🎁 Surprise</a>
       </nav>
+
+      <!-- Dad's Loving Message Layout Target Block Component -->
+      <div class="dad-message-box">
+        <div class="dad-title">💌 Message from Dad</div>
+        <p class="dad-text"><span id="typewriterTarget"></span><span id="typingCursor" class="typing-cursor"></span></p>
+      </div>
     </div>
   </main>
 
@@ -383,6 +455,10 @@
   </footer>
 
   <script>
+    // Constant string storage for dad's live typewriter print matrix configuration
+    const dadMessageText = "To my beautiful princess Keisha, watching you grow is the greatest joy of my life. I wish you health, endless laughter, and a bright future filled with magic milestones. Always remember that you are capable of anything, and your dad will be right here cheering you on. I love you so, so much! ❤️";
+    let typewriterInterval = null;
+
     function populateDays() {
       const yearSelect = document.getElementById("year");
       const monthSelect = document.getElementById("month");
@@ -416,20 +492,14 @@
       }
     }
 
-    // Persist session state across page redirects using SessionStorage
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById("year").value = "2010";
-      document.getElementById("month").value = "08";
+      document.getElementById("year").value = "2026";
+      document.getElementById("month").value = "06";
       populateDays();
-      document.getElementById("day").value = "21";
+      document.getElementById("day").value = "05";
 
       if (sessionStorage.getItem("keishaUnlocked") === "true") {
-        document.getElementById("verification").classList.add("hidden");
-        document.getElementById("mainContent").classList.remove("hidden");
-        document.getElementById("mainContent").style.opacity = "1";
-        document.getElementById("mainContent").style.transform = "scale(1)";
-        runInfiniteEngine();
-        playMusic();
+        renderUnlockedStateDirectly();
       }
     });
 
@@ -439,7 +509,7 @@
 
     function checkBirthday() {
       const input = `${document.getElementById("year").value}-${document.getElementById("month").value}-${document.getElementById("day").value}`;
-      if (input === "2025-06-05") {
+      if (input === "2026-06-05") {
         triggerCelebrationUnlock();
       } else {
         document.getElementById("wishSection").classList.remove("hidden");
@@ -454,7 +524,7 @@
       }
     }
 
-    // FX Engine
+    // High Performance FX Particle Engine Components
     const canvas = document.getElementById('fxCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -516,6 +586,27 @@
       particles.forEach(p => { p.update(); p.draw(); });
     }
 
+    // Typewriter engine function mapping
+    function runTypewriterEffect() {
+      const target = document.getElementById("typewriterTarget");
+      const cursor = document.getElementById("typingCursor");
+      target.innerText = "";
+      cursor.style.display = "inline-block";
+      
+      if (typewriterInterval) clearInterval(typewriterInterval);
+      
+      let index = 0;
+      typewriterInterval = setInterval(() => {
+        if (index < dadMessageText.length) {
+          target.innerText += dadMessageText.charAt(index);
+          index++;
+        } else {
+          clearInterval(typewriterInterval);
+          cursor.style.display = "none";
+        }
+      }, 45); // Typing output speed processing rate
+    }
+
     function triggerCelebrationUnlock() {
       sessionStorage.setItem("keishaUnlocked", "true");
       runFX = true;
@@ -528,6 +619,7 @@
       setTimeout(() => {
         document.getElementById("verification").classList.add("hidden");
         document.getElementById("mainContent").classList.remove("hidden");
+        document.getElementById("headerControls").classList.remove("hidden");
         document.getElementById("mainContent").style.opacity = "0";
         document.getElementById("mainContent").style.transform = "scale(0.95)";
         
@@ -535,10 +627,37 @@
           document.getElementById("mainContent").style.opacity = "1";
           document.getElementById("mainContent").style.transform = "scale(1)";
           runInfiniteEngine();
+          runTypewriterEffect();
         }, 50);
       }, 400);
 
       setTimeout(() => { runFX = false; }, 6000);
+    }
+
+    function renderUnlockedStateDirectly() {
+      document.getElementById("verification").classList.add("hidden");
+      document.getElementById("mainContent").classList.remove("hidden");
+      document.getElementById("headerControls").classList.remove("hidden");
+      document.getElementById("mainContent").style.opacity = "1";
+      document.getElementById("mainContent").style.transform = "scale(1)";
+      runInfiniteEngine();
+      playMusic();
+      runTypewriterEffect();
+    }
+
+    // Re-lock tracking deployment
+    function lockTimelineHub() {
+      sessionStorage.removeItem("keishaUnlocked");
+      if (typewriterInterval) clearInterval(typewriterInterval);
+      
+      document.getElementById("headerControls").classList.add("hidden");
+      document.getElementById("mainContent").classList.add("hidden");
+      document.getElementById("verification").classList.remove("hidden");
+      document.getElementById("verification").style.opacity = "1";
+      document.getElementById("verification").style.transform = "scale(1)";
+      
+      // Clear music payload strings
+      document.getElementById("bgMusic").src = "";
     }
 
     function getOrdinalSuffix(number) {

@@ -205,7 +205,6 @@
       color: #fff;
     }
 
-    /* Short, beautifully formatted text blocks with strict padding limits */
     .modal-content p {
       font-size: 1.15rem;
       line-height: 1.7;
@@ -248,7 +247,7 @@
       border-radius: 32px;
       padding: 45px 35px;
       width: 100%;
-      max-width: 500px;
+      max-width: 540px;
       box-sizing: border-box;
       backdrop-filter: blur(25px);
       box-shadow: 0 0 40px rgba(255, 64, 129, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.05);
@@ -276,10 +275,18 @@
     }
 
     .finale-card p {
-      font-size: 1.1rem;
-      line-height: 1.65;
+      font-size: 1.05rem;
+      line-height: 1.7;
       color: #f3f4f6;
-      margin: 0;
+      margin: 0 0 20px 0;
+    }
+
+    .finale-card .gratitude-section {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+      margin-top: 20px;
+      font-style: italic;
+      color: #ffd54f;
     }
 
     .back-btn {
@@ -345,6 +352,12 @@
     <div id="finale" class="hidden finale-card">
       <h2>🎆 Grand Finale 🎆</h2>
       <p>Keisha, you are the brightest star in our lives. Happy Birthday from Dad Beltah and Mom Staicy!</p>
+      
+      <div class="gratitude-section">
+        <p>❤️ A Special Message from Beltah: ❤️<br>
+        To Staicy’s Dad and Mom — thank you from the bottom of my heart for accepting us and for taking care of Staicy up to date. I truly appreciate and thank you both for your endless love and support!</p>
+      </div>
+      
       <iframe id="finaleMusic" width="0" height="0" src="" frameborder="0" allow="autoplay" class="hidden"></iframe>
     </div>
 
@@ -423,7 +436,6 @@
       }
     }
 
-    // High fidelity typewriter engine supporting intentional text-spacing markup safely
     function triggerTypewriterHTML(htmlText) {
       const container = document.getElementById('modalMessage');
       container.innerHTML = ""; 
@@ -434,7 +446,6 @@
 
       typingInterval = setInterval(() => {
         if (index < htmlText.length) {
-          // Instantly parse HTML markup segments to protect spatial continuity updates
           if (htmlText.substr(index, 4) === "<br>") {
             currentHTML += "<br>";
             index += 4;

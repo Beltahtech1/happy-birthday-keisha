@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Countdown to Surprise</title>
+  <title>Keisha's Birthday Hub</title>
   <style>
     :root {
       --bg: #07070c;
@@ -12,7 +12,7 @@
       --accent: #ff4081;
       --accent-glow: rgba(255, 64, 129, 0.4);
       --text-main: #f3f4f6;
-      --text-muted: #a1a1aa;
+      --text-muted: #d1d1d6;
     }
 
     body {
@@ -35,16 +35,74 @@
       position: fixed;
       top: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 1400px; height: 100%;
-      background: radial-gradient(circle at 50% 30%, rgba(255, 64, 129, 0.2), transparent 60%);
+      background: radial-gradient(circle at 50% 25%, rgba(255, 64, 129, 0.2), transparent 60%);
       z-index: -2;
       pointer-events: none;
     }
 
-    #ambientCanvas {
+    #fxCanvas {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
+      z-index: 999;
       pointer-events: none;
+    }
+
+    .ambient-layer {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; pointer-events: none;
+    }
+    .ambient-item {
+      position: absolute;
+      font-size: 1.2rem;
+      opacity: 0.25;
+    }
+    .ambient-up {
+      bottom: -50px;
+      animation: riseUp 14s infinite linear;
+    }
+    .ambient-down {
+      top: -50px;
+      animation: fallDown 14s infinite linear;
+    }
+    @keyframes riseUp {
+      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.35; }
+      90% { opacity: 0.35; }
+      100% { transform: translateY(-115vh) translateX(40px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes fallDown {
+      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.35; }
+      90% { opacity: 0.35; }
+      100% { transform: translateY(115vh) translateX(-40px) rotate(-360deg); opacity: 0; }
+    }
+
+    /* Fixed Top Right Header Controls */
+    .header-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .btn-lock {
+      background: rgba(255, 64, 129, 0.15);
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 64, 129, 0.2);
+    }
+    .btn-lock:hover {
+      background: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
     main {
@@ -54,13 +112,56 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-width: 800px;
       padding: 40px 20px;
       box-sizing: border-box;
     }
 
+    .avatar-container {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 24px auto;
+      position: relative;
+    }
+    .avatar-ring {
+      position: absolute;
+      top: -6px; left: -6px; right: -6px; bottom: -6px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--accent), #ff80ab, #ffc1e3);
+      animation: spinAvatar 8s linear infinite;
+      z-index: 1;
+    }
+    @keyframes spinAvatar {
+      100% { transform: rotate(360deg); }
+    }
+    .avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: #14141f;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+      border: 2px solid var(--bg);
+    }
+    .avatar-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 32px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 540px;
+      backdrop-filter: blur(25px);
+      box-shadow: 0 0 30px rgba(255, 64, 129, 0.25), inset 0 0 15px rgba(255, 255, 255, 0.05);
+      box-sizing: border-box;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
     h1 {
-      font-size: 2.8rem;
+      font-size: 2.2rem;
       font-weight: 800;
       letter-spacing: -0.04em;
       margin: 0 0 10px 0;
@@ -69,133 +170,174 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      margin-bottom: 30px;
-    }
-
-    .countdown-card {
-      background: var(--card-bg);
-      border: 2px solid var(--border);
-      border-radius: 32px;
-      padding: 40px 25px;
-      width: 100%;
-      max-width: 500px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-      margin-bottom: 25px;
-      box-sizing: border-box;
-    }
-
-    .timer-grid {
+    .calendar-select {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 35px 0;
     }
-
-    .time-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    .select-wrapper {
+      position: relative;
+      background: rgba(20, 20, 35, 0.9);
+      border: 2px solid #ff4081;
       border-radius: 16px;
-      padding: 15px 5px;
-    }
-
-    .time-num {
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--accent);
-      text-shadow: 0 0 10px var(--accent-glow);
-    }
-
-    .time-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 5px;
-    }
-
-    .date-marker {
-      font-size: 1.1rem;
-      color: #ffd54f;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      margin-bottom: 15px;
-    }
-
-    .input-group {
-      margin-bottom: 25px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .input-label {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-    }
-
-    .date-input {
-      background: rgba(15, 15, 25, 0.8);
-      border: 2px solid var(--border);
-      color: #fff;
-      border-radius: 14px;
-      padding: 12px 20px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      text-align: center;
-      outline: none;
-      width: 100%;
-      max-width: 220px;
-      box-sizing: border-box;
+      box-shadow: 0 0 12px rgba(255, 64, 129, 0.3);
       transition: all 0.3s ease;
-      font-family: inherit;
+    }
+    .select-wrapper:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      padding: 16px 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      text-align: center;
+    }
+    select option {
+      background-color: #141423;
+      color: #ffffff;
+      font-weight: 600;
     }
 
-    .date-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 12px var(--accent-glow);
+    textarea {
+      width: 100%;
+      background: rgba(15, 15, 25, 0.85);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      color: #fff;
+      padding: 16px;
+      box-sizing: border-box;
+      resize: none;
+      height: 90px;
+      margin: 15px 0 5px 0;
+      font-size: 0.95rem;
     }
 
-    .action-btn {
+    button, nav a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 16px 40px;
+      padding: 16px 36px;
       border-radius: 100px;
       font-weight: 700;
       font-size: 1rem;
-      cursor: pointer;
-      border: none;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
-      width: 100%;
-      max-width: 260px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .unlock-btn {
+    .btn-action {
       background: linear-gradient(45deg, #ff4081, #ff80ab);
-      color: #fff;
-      box-shadow: 0 5px 20px rgba(255, 64, 129, 0.3);
+      color: #ffffff;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
     }
-    .unlock-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(255, 64, 129, 0.5), 0 0 15px var(--accent-glow);
+    .btn-action:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(255, 64, 129, 0.7), 0 0 15px #fff;
     }
 
-    .status-msg {
-      margin-top: 15px;
-      font-size: 0.95rem;
-      color: #ef4444;
-      font-weight: 500;
-      min-height: 22px;
+    nav {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 35px;
+      width: 100%;
     }
-    .status-msg.ready {
-      color: #22c55e;
+    nav a {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: #fff;
     }
+    nav a:hover {
+      border-color: var(--accent);
+      background: rgba(255, 64, 129, 0.08);
+      box-shadow: 0 0 25px var(--accent-glow);
+      transform: translateY(-3px);
+    }
+
+    .countdown-grid {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 35px 0 25px 0;
+    }
+    .time-block {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      min-width: 75px;
+    }
+    .time-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: block;
+    }
+    .time-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Premium Dynamic Typing Dad Message Display Frame Components */
+    .dad-message-box {
+      margin-top: 30px;
+      padding: 24px;
+      background: rgba(255, 64, 129, 0.03);
+      border: 2px dashed rgba(255, 64, 129, 0.4);
+      border-radius: 20px;
+      text-align: left;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(255, 64, 129, 0.05);
+    }
+    .dad-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dad-text {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #f3f4f6;
+      margin: 0;
+      min-height: 60px;
+    }
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1rem;
+      background-color: var(--accent);
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hidden { display: none !important; }
 
     footer {
       width: 100%;
@@ -204,136 +346,189 @@
       color: var(--text-muted);
       border-top: 1px solid var(--border);
       letter-spacing: 0.05em;
-      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <canvas id="ambientCanvas"></canvas>
+  <!-- Dynamic Control Overlay Area -->
+  <div id="headerControls" class="header-controls hidden">
+    <button class="btn-lock" onclick="lockTimelineHub()">🔒 Back</button>
+  </div>
+
+  <canvas id="fxCanvas"></canvas>
+
+  <div class="ambient-layer">
+    <div class="ambient-item ambient-up" style="left: 5%; animation-delay: 0s;">✨</div>
+    <div class="ambient-item ambient-up" style="left: 25%; animation-delay: 4s;">🎉</div>
+    <div class="ambient-item ambient-up" style="left: 45%; animation-delay: 1s;">✨</div>
+    <div class="ambient-item ambient-up" style="left: 65%; animation-delay: 6s;">🎀</div>
+    <div class="ambient-item ambient-up" style="left: 85%; animation-delay: 3s;">✨</div>
+    
+    <div class="ambient-item ambient-down" style="left: 15%; animation-delay: 2s;">✨</div>
+    <div class="ambient-item ambient-down" style="left: 35%; animation-delay: 7s;">🎀</div>
+    <div class="ambient-item ambient-down" style="left: 55%; animation-delay: 0s;">✨</div>
+    <div class="ambient-item ambient-down" style="left: 75%; animation-delay: 5s;">🎉</div>
+    <div class="ambient-item ambient-down" style="left: 95%; animation-delay: 3s;">✨</div>
+  </div>
 
   <main>
-    <h1>⏳ A Special Moment Awaits</h1>
-    <p class="subtitle">Counting down to a very beautiful memory...</p>
+    <div class="avatar-container">
+      <div class="avatar-ring"></div>
+      <div class="avatar-inner">
+        <img src="https://files.catbox.moe/mpmubr.jpeg" alt="Keisha">
+      </div>
+    </div>
 
-    <div class="countdown-card">
-      <div class="date-marker">Unlock Target: 05/06/2025</div>
+    <!-- Verification Card -->
+    <div id="verification" class="card">
+      <h1>🎂 Keisha's Birthday</h1>
+      <p style="color: var(--text-muted); margin: 0;">Unlock her automated milestone celebration:</p>
       
-      <div class="timer-grid">
-        <div class="time-box"><div id="days" class="time-num">00</div><div class="time-label">Days</div></div>
-        <div class="time-box"><div id="hours" class="time-num">00</div><div class="time-label">Hrs</div></div>
-        <div class="time-box"><div id="minutes" class="time-num">00</div><div class="time-label">Mins</div></div>
-        <div class="time-box"><div id="seconds" class="time-num">00</div><div class="time-label">Secs</div></div>
+      <div class="calendar-select">
+        <div class="select-wrapper">
+          <select id="year" onchange="populateDays()">
+            <script>
+              for (let y = 2026; y >= 2010; y--) {
+                document.write(`<option value="${y}">${y}</option>`);
+              }
+            </script>
+          </select>
+        </div>
+        <div class="select-wrapper">
+          <select id="month" onchange="populateDays()">
+            <option value="01">Jan</option><option value="02">Feb</option>
+            <option value="03">Mar</option><option value="04">Apr</option>
+            <option value="05">May</option><option value="06">Jun</option>
+            <option value="07">Jul</option><option value="08">Aug</option>
+            <option value="09">Sep</option><option value="10">Oct</option>
+            <option value="11">Nov</option><option value="12">Dec</option>
+          </select>
+        </div>
+        <div class="select-wrapper">
+          <select id="day">
+          </select>
+        </div>
       </div>
 
-      <div class="input-group">
-        <label for="birthdayInput" class="input-label">Enter Keisha's Birthday to Instant Unlock:</label>
-        <input 
-          type="text" 
-          id="birthdayInput" 
-          class="date-input" 
-          placeholder="07/04/2013" 
-          maxlength="10"
-          oninput="formatDateInput(this)"
-        >
+      <button class="btn-action" onclick="checkBirthday()">Unlock Timeline</button>
+
+      <div id="wishSection" class="hidden" style="margin-top: 25px;">
+        <p style="color: var(--accent); margin: 0 0 10px 0; font-size: 0.95rem;">Incorrect target date! Leave a 100-character wish to proceed:</p>
+        <textarea id="wishInput" maxlength="100" placeholder="Write exactly 100 characters..."></textarea>
+        <p id="charCount" style="font-size: 0.8rem; color: var(--text-muted); text-align: right; margin: 0 0 15px 0;">0 / 100</p>
+        <button class="btn-action" onclick="checkWish()">Submit Alternative Access</button>
+      </div>
+    </div>
+
+    <!-- Main View Dashboard Panel -->
+    <div id="mainContent" class="hidden card">
+      <h1 id="celebrationHeader">🎉 Loading Milestone...</h1>
+      <p id="targetStatus" style="color: var(--text-muted); margin: 0; font-size: 0.95rem;"></p>
+      
+      <div class="countdown-grid">
+        <div class="time-block"><span id="box-d" class="time-num">00</span><span class="time-label">Days</span></div>
+        <div class="time-block"><span id="box-h" class="time-num">00</span><span class="time-label">Hrs</span></div>
+        <div class="time-block"><span id="box-m" class="time-num">00</span><span class="time-label">Mins</span></div>
+        <div class="time-block"><span id="box-s" class="time-num">00</span><span class="time-label">Secs</span></div>
       </div>
 
-      <button id="actionButton" class="action-btn unlock-btn" onclick="checkUnlockCondition()">
-        Unlock Surprise ✨
-      </button>
-      
-      <div id="statusText" class="status-msg">🔒 Enter the correct date matching DD/MM/YYYY to proceed.</div>
+      <nav>
+        <a href="gallery.html">📸 Gallery Hub</a>
+        <a href="story.html">🌈 Our Story</a>
+        <a href="letter.html">💌 Letters</a>
+        <a href="surprise.html">🎁 Surprise</a>
+      </nav>
+
+      <!-- Dad's Loving Message Layout Target Block Component -->
+      <div class="dad-message-box">
+        <div class="dad-title">💌 Message from Dad</div>
+        <p class="dad-text"><span id="typewriterTarget"></span><span id="typingCursor" class="typing-cursor"></span></p>
+      </div>
     </div>
   </main>
 
+  <iframe id="bgMusic" width="0" height="0" src="" frameborder="0" allow="autoplay" style="display:none;"></iframe>
+
   <footer>
-    CODED SUCCESSFULLY BY BELTAH
+    CODED SUCCESSFULLY BY BELTAH[cite: 2]
   </footer>
 
   <script>
-    // Configured matching key criteria: 05/06/2025 (DD/MM/YYYY)
-    const targetDate = new Date("2025-06-05T00:00:00").getTime();
-    const correctBirthday = "05/06/2025"; 
+    // Constant string storage for dad's live typewriter print matrix configuration
+    const dadMessageText = "To my beautiful princess Keisha, watching you grow is the greatest joy of my life. I wish you health, endless laughter, and a bright future filled with magic milestones. Always remember that you are capable of anything, and your dad will be right here cheering you on. I love you so, so much! ❤️";
+    let typewriterInterval = null;
 
-    function playAudioTone(freq, wave, dur) {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-        osc.type = wave;
-        osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + dur);
-      } catch(e) {}
-    }
-
-    function formatDateInput(input) {
-      let val = input.value.replace(/\D/g, '');
-      if (val.length > 2 && val.length <= 4) {
-        val = val.slice(0, 2) + '/' + val.slice(2);
-      } else if (val.length > 4) {
-        val = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4, 8);
+    function populateDays() {
+      const yearSelect = document.getElementById("year");
+      const monthSelect = document.getElementById("month");
+      const daySelect = document.getElementById("day");
+      
+      const selectedYear = parseInt(yearSelect.value);
+      const selectedMonth = parseInt(monthSelect.value);
+      
+      let startDay = 1;
+      let endDay = new Date(selectedYear, selectedMonth, 0).getDate();
+      
+      if (selectedYear === 2010 && selectedMonth === 1) {
+        startDay = 6;
       }
-      input.value = val;
+      if (selectedYear === 2026 && selectedMonth === 12) {
+        endDay = 27;
+      }
+      
+      const currentSelectedDay = daySelect.value;
+      daySelect.innerHTML = "";
+      
+      for (let d = startDay; d <= endDay; d++) {
+        const val = String(d).padStart(2, '0');
+        const option = document.createElement("option");
+        option.value = val;
+        option.text = d;
+        if (val === currentSelectedDay) {
+          option.selected = true;
+        }
+        daySelect.appendChild(option);
+      }
     }
 
-    function checkUnlockCondition() {
-      const inputVal = document.getElementById("birthdayInput").value.trim();
-      const status = document.getElementById("statusText");
-      const now = new Date().getTime();
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById("year").value = "2026";
+      document.getElementById("month").value = "06";
+      populateDays();
+      document.getElementById("day").value = "05";
 
-      if (inputVal === correctBirthday || now >= targetDate) {
-        playAudioTone(523.25, 'sine', 0.15);
-        status.innerText = "🔓 Access Granted! Redirecting...";
-        status.className = "status-msg ready";
-        setTimeout(() => {
-          playAudioTone(659.25, 'sine', 0.3);
-          window.location.href = "surprise.html";
-        }, 600);
+      if (sessionStorage.getItem("keishaUnlocked") === "true") {
+        renderUnlockedStateDirectly();
+      }
+    });
+
+    document.getElementById("wishInput").addEventListener("input", function() {
+      document.getElementById("charCount").innerText = `${this.value.length} / 100`;
+    });
+
+    function checkBirthday() {
+      const input = `${document.getElementById("year").value}-${document.getElementById("month").value}-${document.getElementById("day").value}`;
+      if (input === "2026-06-05") {
+        triggerCelebrationUnlock();
       } else {
-        playAudioTone(180, 'sawtooth', 0.2);
-        status.innerText = "❌ Incorrect date code. Please try again!";
-        status.className = "status-msg";
+        document.getElementById("wishSection").classList.remove("hidden");
       }
     }
 
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
-
-      if (difference <= 0) {
-        document.getElementById("days").innerText = "00";
-        document.getElementById("hours").innerText = "00";
-        document.getElementById("minutes").innerText = "00";
-        document.getElementById("seconds").innerText = "00";
-        
-        const status = document.getElementById("statusText");
-        status.innerText = "🔓 The surprise timeline has arrived! Click Unlock to view.";
-        status.className = "status-msg ready";
-        return;
+    function checkWish() {
+      if (document.getElementById("wishInput").value.length === 100) {
+        triggerCelebrationUnlock();
+      } else {
+        alert("Your authorization message must be exactly 100 characters long!");
       }
-
-      const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const s = Math.floor((difference % (1000 * 60)) / 1000);
-
-      document.getElementById("days").innerText = d < 10 ? "0" + d : d;
-      document.getElementById("hours").innerText = h < 10 ? "0" + h : h;
-      document.getElementById("minutes").innerText = m < 10 ? "0" + m : m;
-      document.getElementById("seconds").innerText = s < 10 ? "0" + s : s;
     }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-    const canvas = document.getElementById('ambientCanvas');
+    // High Performance FX Particle Engine Components
+    const canvas = document.getElementById('fxCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
+    let runFX = false;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -342,58 +537,170 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    class FloatingItem {
-      constructor() {
-        this.reset();
-        this.y = Math.random() * canvas.height; 
-      }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 100;
-        this.size = Math.random() * 10 + 5;
-        this.speed = Math.random() * 0.6 + 0.3;
-        this.type = Math.random() < 0.25 ? 'emoji' : 'glitter';
-        this.emoji = ['✨', '🎈', '🎉', '💖'][Math.floor(Math.random() * 4)];
-        this.color = `hsl(${Math.random() * 40 + 320}, 100%, 75%)`;
-        this.alpha = Math.random() * 0.25 + 0.1;
+    class CelebrationParticle {
+      constructor(x, y, type) {
+        this.x = x; this.y = y; this.type = type;
+        this.radius = type === 'firework' ? Math.random() * 3 + 1 : Math.random() * 4 + 2;
         this.angle = Math.random() * Math.PI * 2;
-        this.wobbleSpeed = Math.random() * 0.02 + 0.005;
+        this.speed = type === 'firework' ? Math.random() * 6 + 2 : Math.random() * 3 + 1;
+        this.vx = Math.cos(this.angle) * this.speed;
+        this.vy = Math.sin(this.angle) * this.speed + (type === 'ribbon' ? 1 : 0);
+        this.color = `hsl(${Math.random() * 360}, 100%, 65%)`;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.015 + 0.01;
+        this.rotation = Math.random() * 360;
+        this.rotSpeed = Math.random() * 4 - 2;
       }
       update() {
-        this.y -= this.speed;
-        this.angle += this.wobbleSpeed;
-        this.x += Math.sin(this.angle) * 0.3;
-        if (this.y < -50) this.reset();
+        this.x += this.vx; this.y += this.vy;
+        if (this.type === 'firework') this.vy += 0.04; 
+        this.alpha -= this.decay; this.rotation += this.rotSpeed;
       }
       draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        if (this.type === 'emoji') {
-          ctx.font = `${this.size}px Arial`;
-          ctx.fillText(this.emoji, this.x, this.y);
+        ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+        if (this.type === 'firework') {
+          ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill();
         } else {
-          ctx.fillStyle = this.color;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size / 4, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI / 180);
+          ctx.fillRect(-this.radius, -this.radius / 3, this.radius * 2, this.radius / 1.5);
         }
         ctx.restore();
       }
     }
 
-    for (let i = 0; i < 25; i++) {
-      particles.push(new FloatingItem());
+    function createExplosion(x, y) {
+      for (let i = 0; i < 60; i++) particles.push(new CelebrationParticle(x, y, 'firework'));
+      for (let i = 0; i < 30; i++) particles.push(new CelebrationParticle(x, y, 'ribbon'));
     }
 
-    function animate() {
-      requestAnimationFrame(animate);
+    function animateFX() {
+      if (!runFX && particles.length === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); return;
+      }
+      requestAnimationFrame(animateFX);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      if (runFX && Math.random() < 0.08) {
+        createExplosion(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6));
+      }
+      particles = particles.filter(p => p.alpha > 0);
+      particles.forEach(p => { p.update(); p.draw(); });
     }
-    animate();
+
+    // Typewriter engine function mapping
+    function runTypewriterEffect() {
+      const target = document.getElementById("typewriterTarget");
+      const cursor = document.getElementById("typingCursor");
+      target.innerText = "";
+      cursor.style.display = "inline-block";
+      
+      if (typewriterInterval) clearInterval(typewriterInterval);
+      
+      let index = 0;
+      typewriterInterval = setInterval(() => {
+        if (index < dadMessageText.length) {
+          target.innerText += dadMessageText.charAt(index);
+          index++;
+        } else {
+          clearInterval(typewriterInterval);
+          cursor.style.display = "none";
+        }
+      }, 45); // Typing output speed processing rate
+    }
+
+    function triggerCelebrationUnlock() {
+      sessionStorage.setItem("keishaUnlocked", "true");
+      runFX = true;
+      animateFX();
+      playMusic();
+
+      document.getElementById("verification").style.opacity = "0";
+      document.getElementById("verification").style.transform = "scale(0.9)";
+      
+      setTimeout(() => {
+        document.getElementById("verification").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+        document.getElementById("headerControls").classList.remove("hidden");
+        document.getElementById("mainContent").style.opacity = "0";
+        document.getElementById("mainContent").style.transform = "scale(0.95)";
+        
+        setTimeout(() => {
+          document.getElementById("mainContent").style.opacity = "1";
+          document.getElementById("mainContent").style.transform = "scale(1)";
+          runInfiniteEngine();
+          runTypewriterEffect();
+        }, 50);
+      }, 400);
+
+      setTimeout(() => { runFX = false; }, 6000);
+    }
+
+    function renderUnlockedStateDirectly() {
+      document.getElementById("verification").classList.add("hidden");
+      document.getElementById("mainContent").classList.remove("hidden");
+      document.getElementById("headerControls").classList.remove("hidden");
+      document.getElementById("mainContent").style.opacity = "1";
+      document.getElementById("mainContent").style.transform = "scale(1)";
+      runInfiniteEngine();
+      playMusic();
+      runTypewriterEffect();
+    }
+
+    // Re-lock tracking deployment
+    function lockTimelineHub() {
+      sessionStorage.removeItem("keishaUnlocked");
+      if (typewriterInterval) clearInterval(typewriterInterval);
+      
+      document.getElementById("headerControls").classList.add("hidden");
+      document.getElementById("mainContent").classList.add("hidden");
+      document.getElementById("verification").classList.remove("hidden");
+      document.getElementById("verification").style.opacity = "1";
+      document.getElementById("verification").style.transform = "scale(1)";
+      
+      // Clear music payload strings
+      document.getElementById("bgMusic").src = "";
+    }
+
+    function getOrdinalSuffix(number) {
+      const j = number % 10, k = number % 100;
+      if (j == 1 && k != 11) return number + "st";
+      if (j == 2 && k != 12) return number + "nd";
+      if (j == 3 && k != 13) return number + "rd";
+      return number + "th";
+    }
+
+    function runInfiniteEngine() {
+      const birthYear = 2025;
+      
+      setInterval(() => {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        let targetBirthday = new Date(`June 5, ${currentYear} 00:00:00`);
+        
+        if (now.getTime() > targetBirthday.getTime()) {
+          targetBirthday = new Date(`June 5, ${currentYear + 1} 00:00:00`);
+        }
+
+        const distance = targetBirthday.getTime() - now.getTime();
+        const ageTarget = targetBirthday.getFullYear() - birthYear;
+        
+        document.getElementById("celebrationHeader").innerText = `🎉 Keisha’s ${getOrdinalSuffix(ageTarget)} Birthday`;
+        document.getElementById("targetStatus").innerText = `Time remaining until she reaches this beautiful milestone:`;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("box-d").innerText = String(days).padStart(2, '0');
+        document.getElementById("box-h").innerText = String(hours).padStart(2, '0');
+        document.getElementById("box-m").innerText = String(minutes).padStart(2, '0');
+        document.getElementById("box-s").innerText = String(seconds).padStart(2, '0');
+      }, 1000);
+    }
+
+    function playMusic() {
+      document.getElementById("bgMusic").src = "https://www.youtube.com/embed/ho08YLYDM88?autoplay=1&mute=1&loop=1&playlist=ho08YLYDM88&controls=0";
+    }
   </script>
 </body>
 </html>

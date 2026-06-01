@@ -122,7 +122,42 @@
       color: #ffd54f;
       font-weight: 600;
       letter-spacing: 0.05em;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-label {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .date-input {
+      background: rgba(15, 15, 25, 0.8);
+      border: 2px solid var(--border);
+      color: #fff;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+      outline: none;
+      width: 100%;
+      max-width: 220px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .date-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
     }
 
     .action-btn {
@@ -137,6 +172,8 @@
       border: none;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       text-decoration: none;
+      width: 100%;
+      max-width: 260px;
     }
 
     .unlock-btn {
@@ -148,20 +185,13 @@
       transform: translateY(-3px);
       box-shadow: 0 10px 25px rgba(255, 64, 129, 0.5), 0 0 15px var(--accent-glow);
     }
-    .unlock-btn:disabled {
-      background: #27272a;
-      color: #71717a;
-      border: 1px solid #3f3f46;
-      box-shadow: none;
-      cursor: not-allowed;
-      transform: none;
-    }
 
     .status-msg {
       margin-top: 15px;
       font-size: 0.95rem;
       color: #ef4444;
       font-weight: 500;
+      min-height: 22px;
     }
     .status-msg.ready {
       color: #22c55e;
@@ -187,9 +217,7 @@
     <p class="subtitle">Counting down to a very beautiful memory...</p>
 
     <div class="countdown-card">
-      <!-- Hidden target validation signature date: 05/06/2026 -->
-      <!-- Displayed target presentation text string: 08/07/2013 -->
-      <div class="date-marker">Target Date: 08/07/2013</div>
+      <div class="date-marker">Unlock Target: 05/06/2025</div>
       
       <div class="timer-grid">
         <div class="time-box"><div id="days" class="time-num">00</div><div class="time-label">Days</div></div>
@@ -198,11 +226,23 @@
         <div class="time-box"><div id="seconds" class="time-num">00</div><div class="time-label">Secs</div></div>
       </div>
 
-      <button id="actionButton" class="action-btn unlock-btn" onclick="navigateToSurprise()" disabled>
+      <div class="input-group">
+        <label for="birthdayInput" class="input-label">Enter Keisha's Birthday to Instant Unlock:</label>
+        <input 
+          type="text" 
+          id="birthdayInput" 
+          class="date-input" 
+          placeholder="07/04/2013" 
+          maxlength="10"
+          oninput="formatDateInput(this)"
+        >
+      </div>
+
+      <button id="actionButton" class="action-btn unlock-btn" onclick="checkUnlockCondition()">
         Unlock Surprise ✨
       </button>
       
-      <div id="statusText" class="status-msg">🔒 This dynamic gift remains locked until the target time arrives.</div>
+      <div id="statusText" class="status-msg">🔒 Enter the correct date matching DD/MM/YYYY to proceed.</div>
     </div>
   </main>
 
@@ -211,8 +251,9 @@
   </footer>
 
   <script>
-    // System Target Date Matrix (05/06/2026 00:00:00)
-    const targetDate = new Date("2026-06-05T00:00:00").getTime();
+    // Configured matching key criteria: 05/06/2025 (DD/MM/YYYY)
+    const targetDate = new Date("2025-06-05T00:00:00").getTime();
+    const correctBirthday = "05/06/2025"; 
 
     function playAudioTone(freq, wave, dur) {
       try {
@@ -230,6 +271,36 @@
       } catch(e) {}
     }
 
+    function formatDateInput(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length > 2 && val.length <= 4) {
+        val = val.slice(0, 2) + '/' + val.slice(2);
+      } else if (val.length > 4) {
+        val = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4, 8);
+      }
+      input.value = val;
+    }
+
+    function checkUnlockCondition() {
+      const inputVal = document.getElementById("birthdayInput").value.trim();
+      const status = document.getElementById("statusText");
+      const now = new Date().getTime();
+
+      if (inputVal === correctBirthday || now >= targetDate) {
+        playAudioTone(523.25, 'sine', 0.15);
+        status.innerText = "🔓 Access Granted! Redirecting...";
+        status.className = "status-msg ready";
+        setTimeout(() => {
+          playAudioTone(659.25, 'sine', 0.3);
+          window.location.href = "surprise.html";
+        }, 600);
+      } else {
+        playAudioTone(180, 'sawtooth', 0.2);
+        status.innerText = "❌ Incorrect date code. Please try again!";
+        status.className = "status-msg";
+      }
+    }
+
     function updateCountdown() {
       const now = new Date().getTime();
       const difference = targetDate - now;
@@ -240,11 +311,8 @@
         document.getElementById("minutes").innerText = "00";
         document.getElementById("seconds").innerText = "00";
         
-        const btn = document.getElementById("actionButton");
-        btn.disabled = false;
-        
         const status = document.getElementById("statusText");
-        status.innerText = "🔓 The surprise is fully ready! Click above to open your gift.";
+        status.innerText = "🔓 The surprise timeline has arrived! Click Unlock to view.";
         status.className = "status-msg ready";
         return;
       }
@@ -263,15 +331,6 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    function navigateToSurprise() {
-      playAudioTone(523.25, 'sine', 0.15);
-      setTimeout(() => {
-        playAudioTone(659.25, 'sine', 0.3);
-        window.location.href = "surprise.html";
-      }, 150);
-    }
-
-    // Interactive ambient backdrop animations
     const canvas = document.getElementById('ambientCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];

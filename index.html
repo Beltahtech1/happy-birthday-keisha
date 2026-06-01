@@ -351,7 +351,6 @@
 </head>
 <body>
 
-  <!-- Dynamic Control Overlay Area -->
   <div id="headerControls" class="header-controls hidden">
     <button class="btn-lock" onclick="lockTimelineHub()">🔒 Back</button>
   </div>
@@ -380,11 +379,17 @@
       </div>
     </div>
 
-    <!-- Verification Card -->
     <div id="verification" class="card">
-      <h1>🎂 Keisha's Birthday</h1>
-      <p style="color: var(--text-muted); margin: 0;">Unlock her automated milestone celebration:</p>
+      <h1 id="celebrationHeader">🎂 Keisha's Birthday</h1>
+      <p id="targetStatus" style="color: var(--text-muted); margin: 0; font-size: 0.95rem;">Unlock her automated milestone celebration:</p>
       
+      <div class="countdown-grid">
+        <div class="time-block"><span id="box-d" class="time-num">00</span><span class="time-label">Days</span></div>
+        <div class="time-block"><span id="box-h" class="time-num">00</span><span class="time-label">Hrs</span></div>
+        <div class="time-block"><span id="box-m" class="time-num">00</span><span class="time-label">Mins</span></div>
+        <div class="time-block"><span id="box-s" class="time-num">00</span><span class="time-label">Secs</span></div>
+      </div>
+
       <div class="calendar-select">
         <div class="select-wrapper">
           <select id="year" onchange="populateDays()">
@@ -421,18 +426,10 @@
       </div>
     </div>
 
-    <!-- Main View Dashboard Panel -->
     <div id="mainContent" class="hidden card">
-      <h1 id="celebrationHeader">🎉 Loading Milestone...</h1>
-      <p id="targetStatus" style="color: var(--text-muted); margin: 0; font-size: 0.95rem;"></p>
+      <h1>🎉 Timeline Unlocked</h1>
+      <p style="color: var(--accent); margin: 0; font-weight: bold;">Welcome to your milestone hub, Keisha! ✨</p>
       
-      <div class="countdown-grid">
-        <div class="time-block"><span id="box-d" class="time-num">00</span><span class="time-label">Days</span></div>
-        <div class="time-block"><span id="box-h" class="time-num">00</span><span class="time-label">Hrs</span></div>
-        <div class="time-block"><span id="box-m" class="time-num">00</span><span class="time-label">Mins</span></div>
-        <div class="time-block"><span id="box-s" class="time-num">00</span><span class="time-label">Secs</span></div>
-      </div>
-
       <nav>
         <a href="gallery.html">📸 Gallery Hub</a>
         <a href="story.html">🌈 Our Story</a>
@@ -440,7 +437,6 @@
         <a href="surprise.html">🎁 Surprise</a>
       </nav>
 
-      <!-- Dad's Loving Message Layout Target Block Component -->
       <div class="dad-message-box">
         <div class="dad-title">💌 Message from Dad</div>
         <p class="dad-text"><span id="typewriterTarget"></span><span id="typingCursor" class="typing-cursor"></span></p>
@@ -451,11 +447,10 @@
   <iframe id="bgMusic" width="0" height="0" src="" frameborder="0" allow="autoplay" style="display:none;"></iframe>
 
   <footer>
-    CODED SUCCESSFULLY BY BELTAH[cite: 2]
+    CODED SUCCESSFULLY BY BELTAH
   </footer>
 
   <script>
-    // Constant string storage for dad's live typewriter print matrix configuration
     const dadMessageText = "To my beautiful princess Keisha, watching you grow is the greatest joy of my life. I wish you health, endless laughter, and a bright future filled with magic milestones. Always remember that you are capable of anything, and your dad will be right here cheering you on. I love you so, so much! ❤️";
     let typewriterInterval = null;
 
@@ -497,6 +492,9 @@
       document.getElementById("month").value = "06";
       populateDays();
       document.getElementById("day").value = "05";
+
+      // Fire engine setup directly on initialization
+      runInfiniteEngine();
 
       if (sessionStorage.getItem("keishaUnlocked") === "true") {
         renderUnlockedStateDirectly();
@@ -586,7 +584,6 @@
       particles.forEach(p => { p.update(); p.draw(); });
     }
 
-    // Typewriter engine function mapping
     function runTypewriterEffect() {
       const target = document.getElementById("typewriterTarget");
       const cursor = document.getElementById("typingCursor");
@@ -604,7 +601,7 @@
           clearInterval(typewriterInterval);
           cursor.style.display = "none";
         }
-      }, 45); // Typing output speed processing rate
+      }, 45);
     }
 
     function triggerCelebrationUnlock() {
@@ -626,7 +623,6 @@
         setTimeout(() => {
           document.getElementById("mainContent").style.opacity = "1";
           document.getElementById("mainContent").style.transform = "scale(1)";
-          runInfiniteEngine();
           runTypewriterEffect();
         }, 50);
       }, 400);
@@ -640,12 +636,10 @@
       document.getElementById("headerControls").classList.remove("hidden");
       document.getElementById("mainContent").style.opacity = "1";
       document.getElementById("mainContent").style.transform = "scale(1)";
-      runInfiniteEngine();
       playMusic();
       runTypewriterEffect();
     }
 
-    // Re-lock tracking deployment
     function lockTimelineHub() {
       sessionStorage.removeItem("keishaUnlocked");
       if (typewriterInterval) clearInterval(typewriterInterval);
@@ -655,8 +649,6 @@
       document.getElementById("verification").classList.remove("hidden");
       document.getElementById("verification").style.opacity = "1";
       document.getElementById("verification").style.transform = "scale(1)";
-      
-      // Clear music payload strings
       document.getElementById("bgMusic").src = "";
     }
 
@@ -683,8 +675,8 @@
         const distance = targetBirthday.getTime() - now.getTime();
         const ageTarget = targetBirthday.getFullYear() - birthYear;
         
-        document.getElementById("celebrationHeader").innerText = `🎉 Keisha’s ${getOrdinalSuffix(ageTarget)} Birthday`;
-        document.getElementById("targetStatus").innerText = `Time remaining until she reaches this beautiful milestone:`;
+        document.getElementById("celebrationHeader").innerText = `🎂 Keisha’s ${getOrdinalSuffix(ageTarget)} Birthday`;
+        document.getElementById("targetStatus").innerText = `Time left until she reaches this beautiful milestone:`;
 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

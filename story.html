@@ -7,8 +7,8 @@
   <style>
     :root {
       --bg: #07070c;
-      --card-bg: rgba(15, 15, 25, 0.65);
-      --border: rgba(255, 64, 129, 0.25);
+      --book-bg: rgba(18, 18, 29, 0.85);
+      --border: rgba(255, 64, 129, 0.3);
       --accent: #ff4081;
       --accent-glow: rgba(255, 64, 129, 0.4);
       --text-main: #f3f4f6;
@@ -24,11 +24,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Ambient Mesh Backdrop */
     body::before {
       content: "";
       position: fixed;
@@ -47,77 +47,77 @@
     }
 
     main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       max-width: 680px;
-      padding: 40px 20px 60px 20px;
+      padding: 20px;
       box-sizing: border-box;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 800;
       letter-spacing: -0.04em;
-      margin: 0 0 10px 0;
+      margin: 0 0 25px 0;
       background: linear-gradient(to right, #fff, #ff80ab);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-align: center;
     }
 
-    header p {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      margin: 0;
+    /* Interactive Memory Book Component Layout */
+    .book-container {
+      width: 100%;
+      perspective: 1000px;
+      margin-bottom: 25px;
     }
 
-    /* Timeline Container Architecture */
-    .timeline {
+    .book-frame {
+      background: var(--book-bg);
+      border: 2px solid var(--border);
+      border-radius: 28px;
+      padding: 35px;
+      box-sizing: border-box;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(25px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 64, 129, 0.15);
       position: relative;
-      border-left: 2px dashed var(--border);
-      margin: 10px 10px 40px 20px;
-      padding-left: 30px;
+      overflow: hidden;
+    }
+
+    /* Virtual Binder Spine Visual Accent */
+    .book-frame::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 12px;
+      background: linear-gradient(to right, rgba(0,0,0,0.3), rgba(255,64,129,0.1), transparent);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .page {
+      display: none;
+      animation: flipEffect 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       text-align: left;
     }
 
-    .story-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 25px 28px;
-      margin-bottom: 30px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      position: relative;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    
-    .story-card:hover {
-      transform: translateX(4px);
-      border-color: var(--accent);
-      box-shadow: 0 0 25px rgba(255, 64, 129, 0.2);
+    .page.active {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
     }
 
-    /* Interactive Timeline Indicator Nodes */
-    .story-card::before {
-      content: "";
-      position: absolute;
-      left: -41px;
-      top: 28px;
-      width: 20px;
-      height: 20px;
-      background: var(--bg);
-      border: 2px solid var(--accent);
-      border-radius: 50%;
-      z-index: 2;
-      box-shadow: 0 0 10px var(--accent);
-      transition: background 0.3s ease;
-    }
-    .story-card:hover::before {
-      background: var(--accent);
+    @keyframes flipEffect {
+      from { opacity: 0; transform: rotateY(-15deg) translateX(20px); }
+      to { opacity: 1; transform: rotateY(0deg) translateX(0); }
     }
 
     .meta-tag {
@@ -125,61 +125,107 @@
       background: rgba(255, 64, 129, 0.1);
       border: 1px solid rgba(255, 64, 129, 0.2);
       color: var(--accent);
-      padding: 4px 12px;
+      padding: 4px 14px;
       border-radius: 100px;
       font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
-    .story-card h3 {
-      margin: 0 0 10px 0;
-      font-size: 1.25rem;
-      font-weight: 700;
+    .page h3 {
+      margin: 0 0 14px 0;
+      font-size: 1.4rem;
+      font-weight: 800;
       color: #fff;
     }
 
-    .story-card p {
-      font-size: 0.98rem;
-      line-height: 1.6;
-      color: #e4e4e7;
-      margin: 0;
+    .page p {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: #f3f4f6;
+      margin: 0 0 20px 0;
     }
 
     .location-badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      margin-top: 15px;
       font-size: 0.85rem;
       color: var(--text-muted);
       background: rgba(255, 255, 255, 0.03);
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 8px;
+      width: fit-content;
+    }
+
+    /* Flip Navigation Controller Panels */
+    .book-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(255, 64, 129, 0.1);
+      box-shadow: 0 0 15px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    .page-number {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
     }
 
     .back-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 14px 32px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 12px 28px;
       border-radius: 100px;
-      font-weight: 700;
-      font-size: 0.95rem;
+      font-weight: 600;
+      font-size: 0.9rem;
       text-decoration: none;
       transition: all 0.3s ease;
-      margin: 0 auto;
+      margin-top: 20px;
     }
     .back-btn:hover {
-      border-color: var(--accent);
-      background: rgba(255, 64, 129, 0.08);
-      box-shadow: 0 0 25px var(--accent-glow);
-      transform: translateY(-2px);
+      border-color: var(--border);
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
     }
 
     footer {
@@ -199,90 +245,112 @@
   <canvas id="ambientCanvas"></canvas>
 
   <main>
-    <header>
-      <h1>🌈 Keisha’s Nine-Month Journey</h1>
-      <p>The beautiful steps and stories that led to our perfect miracle</p>
-    </header>
+    <h1>🌈 Keisha’s Storybook</h1>
 
-    <div class="timeline">
+    <div class="book-container">
+      <div class="book-frame">
+        
+        <!-- PAGE 1 -->
+        <div class="page active">
+          <div>
+            <div class="meta-tag">Month 1</div>
+            <h3>🌱 The Sweet Beginning</h3>
+            <p>This is where our beautiful secret started[cite: 4]. Finding out we were expecting you filled our tiny college room with a whole new kind of love[cite: 4]. Your mom and I stayed close every single day, listening to your very first tiny heartbeats while balancing classes and endless big dreams for the future[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 College Campus[cite: 4]</div>
+        </div>
 
-      <!-- MONTH 1 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 1</div>
-        <h3>🌱 The Sweet Beginning</h3>
-        <p>This is where our beautiful secret started. Finding out we were expecting you filled our tiny college room with a whole new kind of love. Your mom and I stayed close every single day, listening to your very first tiny heartbeats while balancing classes and endless big dreams for the future.</p>
-        <div class="location-badge">📍 College Campus</div>
+        <!-- PAGE 2 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 2</div>
+            <h3>🍃 College Cravings & Cuddles</h3>
+            <p>Morning sickness kicked in, and college life became a wild balancing act[cite: 4]. Your mom was such a champ, heading to lectures while I made sure she always had her favorite snacks nearby[cite: 4]. Every little kick or change made us realize how incredibly real this journey was becoming[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 College Campus[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 3 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 3</div>
+            <h3>✨ Growing Strong Together</h3>
+            <p>Three months in, and a beautiful little bump started showing[cite: 4]. We spent our evenings walking around the campus paths, talking endlessly about who you would look like and dreaming up the perfect name[cite: 4]. Holding hands, we knew we could face absolutely anything as long as we stood together[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 College Campus[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 4 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 4</div>
+            <h3>🎵 Mid-Semester Melodies</h3>
+            <p>By the fourth month, you could start hearing sounds from the outside world[cite: 4]. I used to sing softly to your mom’s belly after finishing late-night study sessions[cite: 4]. It was our cozy little routine, making sure you knew our voices before you even entered the world[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 College Campus[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 5 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 5</div>
+            <h3>💝 Our Last Campus Chapter</h3>
+            <p>This was our final milestone together at college[cite: 4]. We treasured every single moment of this fifth month, knowing big transitions were coming up next[cite: 4]. Your mom was glowing beautifully, and we celebrated finishing this special season of nesting together under one roof[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 College Campus[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 6 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 6</div>
+            <h3>🏡 Back to the Family Nest</h3>
+            <p>To ensure she had the absolute best care and comfort, your mom moved back home with her family[cite: 4]. They welcomed her with open arms, cooking her favorite traditional meals and taking sweet care of her every single day while she kept traveling to finish up her remaining college classes[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 Family Home[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 7 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 7</div>
+            <h3>💼 Stepping into Nairobi</h3>
+            <p>While your wonderful grandparents pampered your mom back home, I made a major step and shifted to Nairobi to search for a job[cite: 4]. I walked the city streets with fire in my heart, determined to build a beautiful, stable, and warm future for you and your mom[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 Nairobi City[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 8 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 8</div>
+            <h3>📞 Phone Calls & Big Dreams</h3>
+            <p>Distance wasn’t easy, but love kept us connected across the miles[cite: 4]. Every single evening, I would call to check on the latest updates from her checkups[cite: 4]. Your mom would tell me how much you were kicking, and her family made sure she stayed perfectly safe, relaxed, and happy[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 Nairobi / Home[cite: 4]</div>
+        </div>
+
+        <!-- PAGE 9 -->
+        <div class="page">
+          <div>
+            <div class="meta-tag">Month 9</div>
+            <h3>🍼 The Ultimate Miracle Arrives</h3>
+            <p>The long-awaited final days came with so much excitement[cite: 4]. Your mom's family kept her safe and prepared until the magical moment arrived on June 5th, 2025[cite: 4]. You made your grand entrance in Juja, changing our lives forever! Our sweet princess Keisha was finally here, making every single sacrifice completely worth it[cite: 4].</p>
+          </div>
+          <div class="location-badge">📍 Juja Modern[cite: 4]</div>
+        </div>
+
       </div>
-
-      <!-- MONTH 2 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 2</div>
-        <h3>🍃 College Cravings & Cuddles</h3>
-        <p>Morning sickness kicked in, and college life became a wild balancing act. Your mom was such a champ, heading to lectures while I made sure she always had her favorite snacks nearby. Every little kick or change made us realize how incredibly real this journey was becoming.</p>
-        <div class="location-badge">📍 College Campus</div>
-      </div>
-
-      <!-- MONTH 3 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 3</div>
-        <h3>✨ Growing Strong Together</h3>
-        <p>Three months in, and a beautiful little bump started showing. We spent our evenings walking around the campus paths, talking endlessly about who you would look like and dreaming up the perfect name. Holding hands, we knew we could face absolutely anything as long as we stood together.</p>
-        <div class="location-badge">📍 College Campus</div>
-      </div>
-
-      <!-- MONTH 4 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 4</div>
-        <h3>🎵 Mid-Semester Melodies</h3>
-        <p>By the fourth month, you could start hearing sounds from the outside world. I used to sing softly to your mom’s belly after finishing late-night study sessions. It was our cozy little routine, making sure you knew our voices before you even entered the world.</p>
-        <div class="location-badge">📍 College Campus</div>
-      </div>
-
-      <!-- MONTH 5 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 5</div>
-        <h3>💝 Our Last Campus Chapter</h3>
-        <p>This was our final milestone together at college. We treasured every single moment of this fifth month, knowing big transitions were coming up next. Your mom was glowing beautifully, and we celebrated finishing this special season of nesting together under one roof.</p>
-        <div class="location-badge">📍 College Campus</div>
-      </div>
-
-      <!-- MONTH 6 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 6</div>
-        <h3>🏡 Back to the Family Nest</h3>
-        <p>To ensure she had the absolute best care and comfort, your mom moved back home with her family. They welcomed her with open arms, cooking her favorite traditional meals and taking sweet care of her every single day while she kept traveling to finish up her remaining college classes.</p>
-        <div class="location-badge">📍 Family Home</div>
-      </div>
-
-      <!-- MONTH 7 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 7</div>
-        <h3>💼 Stepping into Nairobi</h3>
-        <p>While your wonderful grandparents pampered your mom back home, I made a major step and shifted to Nairobi to search for a job. I walked the city streets with fire in my heart, determined to build a beautiful, stable, and warm future for you and your mom.</p>
-        <div class="location-badge">📍 Nairobi City</div>
-      </div>
-
-      <!-- MONTH 8 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 8</div>
-        <h3>📞 Phone Calls & Big Dreams</h3>
-        <p>Distance wasn’t easy, but love kept us connected across the miles. Every single evening, I would call to check on the latest updates from her checkups. Your mom would tell me how much you were kicking, and her family made sure she stayed perfectly safe, relaxed, and happy.</p>
-        <div class="location-badge">📍 Nairobi / Home</div>
-      </div>
-
-      <!-- MONTH 9 -->
-      <div class="story-card">
-        <div class="meta-tag">Month 9</div>
-        <h3>🍼 The Ultimate Miracle Arrives</h3>
-        <p>The long-awaited final days came with so much excitement. Your mom's family kept her safe and prepared until the magical moment arrived on June 5th, 2025. You made your grand entrance in Juja, changing our lives forever! Our sweet princess Keisha was finally here, making every single sacrifice completely worth it.</p>
-        <div class="location-badge">📍 Juja Modern</div>
-      </div>
-
     </div>
 
-    <div style="text-align: center;">
-      <a href="index.html" class="back-btn">⬅️ Back to Menu</a>
+    <!-- Flip Book Controls Interface Module -->
+    <div class="book-controls">
+      <button class="nav-btn" id="prevBtn" onclick="changePage(-1)" disabled>◀ Prev</button>
+      <div class="page-number" id="pageIndicator">PAGE 1 / 9</div>
+      <button class="nav-btn" id="nextBtn" onclick="changePage(1)">Next ▶</button>
     </div>
+
+    <a href="index.html" class="back-btn">⬅ Back to Menu</a>
   </main>
 
   <footer>
@@ -290,7 +358,30 @@
   </footer>
 
   <script>
-    // High Performance Smooth Floating Particle Engine
+    // State Tracking Properties
+    let currentPage = 0;
+    const pages = document.querySelectorAll('.page');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageIndicator = document.getElementById('pageIndicator');
+
+    function changePage(direction) {
+      // Cleanly clear active flag safely
+      pages[currentPage].classList.remove('active');
+      
+      // Mutate state securely
+      currentPage += direction;
+      
+      // Apply visibility to next active index mapping
+      pages[currentPage].classList.add('active');
+      
+      // Synchronize controller state configurations
+      prevBtn.disabled = (currentPage === 0);
+      nextBtn.disabled = (currentPage === pages.length - 1);
+      pageIndicator.innerText = `PAGE ${currentPage + 1} / ${pages.length}`;
+    }
+
+    // Canvas Space Particle Architecture Component
     const canvas = document.getElementById('ambientCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -314,7 +405,7 @@
         this.speed = Math.random() * 0.8 + 0.4;
         this.type = Math.random() < 0.35 ? 'emoji' : 'glitter';
         this.emoji = ['✨', '💖', '👶', '🌸', '🎀'][Math.floor(Math.random() * 5)];
-        this.color = `hsl(${Math.random() * 20 + 330}, 100%, 75%)`; // Pink tints
+        this.color = `hsl(${Math.random() * 20 + 330}, 100%, 75%)`;
         this.alpha = Math.random() * 0.3 + 0.1;
         this.angle = Math.random() * Math.PI * 2;
         this.wobbleSpeed = Math.random() * 0.02 + 0.005;

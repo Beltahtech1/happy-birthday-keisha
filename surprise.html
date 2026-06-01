@@ -186,7 +186,7 @@
       border: 2px solid var(--accent);
       border-radius: 32px;
       padding: 40px 30px;
-      max-width: 480px;
+      max-width: 440px;
       width: 90%;
       box-shadow: 0 25px 60px rgba(255, 64, 129, 0.4);
       transform: scale(0.85);
@@ -205,16 +205,16 @@
       color: #fff;
     }
 
-    /* Wrap securely to strictly retain strings inside container walls */
+    /* Short, beautifully formatted text blocks with strict padding limits */
     .modal-content p {
-      font-size: 1.05rem;
-      line-height: 1.6;
+      font-size: 1.15rem;
+      line-height: 1.7;
       color: var(--text-main);
       margin: 0 0 25px 0;
-      min-height: 80px;
+      min-height: 60px;
+      padding: 0 10px;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      white-space: normal;
       text-align: center;
     }
 
@@ -324,19 +324,19 @@
     <p class="subtitle">Click a box to reveal a sparkling surprise!</p>
 
     <div class="grid-container" id="giftsGrid">
-      <div class="surprise-box" onclick="revealSurprise(0, '🌸 To My Beautiful Queen Staicy', 'Thank you for being the most incredible mother. Watching you protect, carry, and care for our baby girl throughout college and beyond showed me how pure your heart is. I love you endlessly.')">
+      <div class="surprise-box" onclick="revealSurprise(0, '🌸 To My Beautiful Queen Staicy', 'Thank you for being the most incredible mother.<br><br>Your pure heart means everything to me.<br><br>I love you endlessly, Staicy! 💖')">
         <span class="gift-icon">🎁</span>
         <span>Box One</span>
       </div>
-      <div class="surprise-box" onclick="revealSurprise(1, '👼 To Our Angel Keisha', 'You are the most precious gift heaven sent to us. Your small laughs and sweet milestones completely changed our world. Daddy and Mommy promise to love and guide you forever.')">
+      <div class="surprise-box" onclick="revealSurprise(1, '👼 To Our Angel Keisha', 'You are the sweetest gift heaven sent to us.<br><br>Your bright little smile changed our world.<br><br>Daddy and Mommy love you forever! ✨')">
         <span class="gift-icon">💝</span>
         <span>Box Two</span>
       </div>
-      <div class="surprise-box" onclick="revealSurprise(2, '✨ Boundless Family Love', 'From our sweet beginning in college to building our dreams in Nairobi and Juja, our little bond has grown into a strong, beautiful family. Together, we can conquer anything.')">
+      <div class="surprise-box" onclick="revealSurprise(2, '✨ Boundless Family Love', 'From our sweet beginning back in college...<br><br>To building beautiful dreams together.<br><br>Our family can conquer anything! 🏡')">
         <span class="gift-icon">⭐</span>
         <span>Box Three</span>
       </div>
-      <div class="surprise-box" onclick="revealSurprise(3, '👑 Our Shining Promise', 'No matter where paths lead or how big you grow, Daddy will always work hard to make your paths smooth. May your wonderful life always sparkle and radiate pure happiness!')">
+      <div class="surprise-box" onclick="revealSurprise(3, '👑 Our Shining Promise', 'No matter how big you grow, sweet girl...<br><br>Daddy will always guide and protect you.<br><br>May your life always sparkle! 🌟')">
         <span class="gift-icon">👑</span>
         <span>Box Four</span>
       </div>
@@ -371,7 +371,7 @@
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
-        const gain = createGainNode(audioCtx, dur);
+        const gain = ctxGain(audioCtx, dur);
         
         osc.type = wave;
         osc.frequency.value = freq;
@@ -383,11 +383,11 @@
       } catch(e) {}
     }
 
-    function createGainNode(ctx, dur) {
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-      return gain;
+    function ctxGain(ctx, dur) {
+      const node = ctx.createGain();
+      node.gain.setValueAtTime(0.12, ctx.currentTime);
+      node.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+      return node;
     }
 
     document.querySelectorAll('.surprise-box').forEach(box => {
@@ -410,7 +410,7 @@
       setTimeout(() => {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('surpriseModal').classList.add('active');
-        triggerTypewriterEffect(message);
+        triggerTypewriterHTML(message);
       }, 400);
 
       if (clicked.every(val => val)) {
@@ -423,21 +423,31 @@
       }
     }
 
-    function triggerTypewriterEffect(text) {
+    // High fidelity typewriter engine supporting intentional text-spacing markup safely
+    function triggerTypewriterHTML(htmlText) {
       const container = document.getElementById('modalMessage');
-      container.innerText = ""; 
+      container.innerHTML = ""; 
       clearInterval(typingInterval);
       
       let index = 0;
+      let currentHTML = "";
+
       typingInterval = setInterval(() => {
-        if (index < text.length) {
-          container.innerText += text.charAt(index);
-          if(index % 2 === 0) playAudioTone(850, 'sine', 0.01);
-          index++;
+        if (index < htmlText.length) {
+          // Instantly parse HTML markup segments to protect spatial continuity updates
+          if (htmlText.substr(index, 4) === "<br>") {
+            currentHTML += "<br>";
+            index += 4;
+          } else {
+            currentHTML += htmlText.charAt(index);
+            index++;
+          }
+          container.innerHTML = currentHTML;
+          if (index % 2 === 0) playAudioTone(850, 'sine', 0.01);
         } else {
           clearInterval(typingInterval);
         }
-      }, 35);
+      }, 30);
     }
 
     function closeModal() {

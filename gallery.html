@@ -2,140 +2,244 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Keisha’s Milestone Gallery</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keisha’s 11-Month Gallery</title>
   <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      text-align: center;
-      overflow-x: hidden;
+    :root {
+      --bg: #09090e;
+      --card-bg: rgba(255, 255, 255, 0.02);
+      --border: rgba(255, 255, 255, 0.07);
+      --accent: #ff4081;
+      --accent-glow: rgba(255, 64, 129, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #a1a1aa;
     }
 
-    /* Glitter background */
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Ambient background glow */
     body::before {
       content: "";
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
-      background-size: 3px 3px;
-      animation: sparkle 6s linear infinite;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 1400px; height: 100%;
+      background: radial-gradient(circle at 50% -10%, rgba(255, 64, 129, 0.12), transparent 60%);
       z-index: -1;
-    }
-    @keyframes sparkle {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
+      pointer-events: none;
     }
 
-    h1 { color: #ff4081; margin-top: 30px; font-size: 3em; }
-
-    .milestone {
-      background: rgba(255,255,255,0.1);
-      margin: 30px auto;
-      padding: 30px;
-      border-radius: 20px;
-      width: 80%;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px #ff4081, 0 0 40px #ff80ab;
-      font-size: 1.2em;
-      line-height: 1.6;
-    }
-    .milestone img {
-      width: 200px;
-      border-radius: 15px;
-      margin-top: 15px;
-      box-shadow: 0 0 15px #ff4081;
+    header {
+      text-align: center;
+      margin-bottom: 50px;
     }
 
-    /* Balloons and ribbons */
-    .balloon {
-      position: absolute;
-      bottom: -100px;
-      width: 80px;
-      animation: float 12s infinite ease-in;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-120vh); }
-    }
-    .ribbon {
-      position: absolute;
-      top: 0;
-      width: 60px;
-      animation: sway 6s infinite ease-in-out;
-    }
-    @keyframes sway {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(10deg); }
-      100% { transform: rotate(0deg); }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 10px 0;
+      background: linear-gradient(to right, #fff, #ff80ab);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    /* Back button */
-    .back-btn {
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .badge {
       display: inline-block;
-      margin: 30px auto;
-      padding: 14px 28px;
-      border-radius: 35px;
-      background: linear-gradient(45deg, #ff4081, #ff80ab, #ffc1e3);
-      color: white;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 0 15px #ff4081, 0 0 30px #ff80ab, 0 0 45px #ffc1e3;
-      transition: all 0.4s ease;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: rgba(255, 64, 129, 0.1);
+      border: 1px solid rgba(255, 64, 129, 0.2);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
     }
+
+    /* Modern Responsive Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1200px;
+      margin-bottom: 60px;
+    }
+
+    /* Elegant Glassmorphic Card */
+    .photo-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 40px var(--accent-glow);
+    }
+
+    /* Interactive Image Wrapper */
+    .image-frame {
+      width: 100%;
+      aspect-ratio: 1 / 1; /* Clean square grid layout */
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.01);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .photo-card:hover .image-frame img {
+      transform: scale(1.06);
+    }
+
+    /* Modern Minimalist Card Details */
+    .photo-card h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: #fff;
+    }
+
+    .photo-card p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Sleek Clean Navigation Button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 32px;
+      border-radius: 100px;
+      background: #ffffff;
+      color: #000000;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
     .back-btn:hover {
-      box-shadow: 0 0 25px #fff, 0 0 50px #ff4081, 0 0 70px #ff80ab;
-      transform: scale(1.08);
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
     }
   </style>
 </head>
 <body>
-  <h1>📸 Keisha’s Milestone Gallery</h1>
 
-  <div class="milestone">
-    <h2>Day 1 — Welcome to the World</h2>
-    <p>Born in Juja, Keisha brought endless joy to Dad Beltah and Mom Staicy. Her first cry was music to our hearts.</p>
-    <img src="YOUR_IMAGE_URL_DAY1" alt="Day 1">
+  <header>
+    <span class="badge">Milestone Collection</span>
+    <h1>Keisha’s 11th Month</h1>
+    <p class="subtitle">7 beautiful moments captured by Dad Beltah & Mom Staicy</p>
+  </header>
+
+  <div class="gallery-grid">
+
+    <!-- Moment 1 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/wqymgo.jpeg" alt="Keisha Morning Smiles">
+      </div>
+      <h2>✨ Morning Sunshine</h2>
+      <p>Starting her 11th month with the brightest smiles that instantly warm our entire world.</p>
+    </div>
+
+    <!-- Moment 2 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/mpmubr.jpeg" alt="Keisha Playtime">
+      </div>
+      <h2>🧸 Playtime Adventures</h2>
+      <p>Curious, energetic, and completely mastering the art of rearranging all her favorite toys.</p>
+    </div>
+
+    <!-- Moment 3 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/sxma5m.jpeg" alt="Keisha Little Steps">
+      </div>
+      <h2>👣 Cruising Around</h2>
+      <p>Holding onto everything and standing tall. Watching her find her balance is pure magic.</p>
+    </div>
+
+    <!-- Moment 4 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/3kld9d.jpeg" alt="Keisha Curious Eyes">
+      </div>
+      <h2>🌟 Infinite Curiosity</h2>
+      <p>Those big, beautiful eyes studying every single detail around the room with total wonder.</p>
+    </div>
+
+    <!-- Moment 5 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/tp25zc.jpeg" alt="Keisha Giggles">
+      </div>
+      <h2>🎵 Sweet Melody</h2>
+      <p>Laughter that sounds like music. Dad's jokes always win her the absolute best giggles.</p>
+    </div>
+
+    <!-- Moment 6 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/zg0hfk.jpeg" alt="Keisha Cuddles">
+      </div>
+      <h2>🤍 Cozy Cuddles</h2>
+      <p>Winding down the active day wrapped tightly in Mom’s loving and protective warmth.</p>
+    </div>
+
+    <!-- Moment 7 -->
+    <div class="photo-card">
+      <div class="image-frame">
+        <img src="https://files.catbox.moe/ychz7g.jpeg" alt="Keisha Pre-Birthday Glow">
+      </div>
+      <h2>🎂 Counting Down to One</h2>
+      <p>11 months complete! The final countdown to her monumental first birthday begins now.</p>
+    </div>
+
   </div>
 
-  <div class="milestone">
-    <h2>Month 1</h2>
-    <p>Keisha’s tiny smiles warmed Beltah and Staicy’s days. Every cuddle was a blessing.</p>
-    <img src="YOUR_IMAGE_URL_MONTH1" alt="Month 1">
-  </div>
+  <a href="index.html" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Back to Menu
+  </a>
 
-  <div class="milestone">
-    <h2>Month 2</h2>
-    <p>Her curious eyes began exploring the world. Dad sang lullabies, Mom whispered love.</p>
-    <img src="YOUR_IMAGE_URL_MONTH2" alt="Month 2">
-  </div>
-
-  <div class="milestone">
-    <h2>Month 3</h2>
-    <p>Keisha’s giggles filled the home. Beltah and Staicy cherished every sound of happiness.</p>
-    <img src="YOUR_IMAGE_URL_MONTH3" alt="Month 3">
-  </div>
-
-  <!-- Continue adding milestones up to Month 12 -->
-  <div class="milestone">
-    <h2>Month 12 — Happy Birthday!</h2>
-    <p>Keisha turns ONE! Dad Beltah and Mom Staicy celebrate their miracle with love and gratitude.</p>
-    <img src="YOUR_IMAGE_URL_MONTH12" alt="Month 12">
-  </div>
-
-  <!-- Back button -->
-  <a href="index.html" class="back-btn">⬅ Back to Menu</a>
-
-  <!-- Balloons -->
-  <img src="balloon.png" class="balloon" style="left:10%;" />
-  <img src="balloon.png" class="balloon" style="left:40%;" />
-  <img src="balloon.png" class="balloon" style="left:70%;" />
-
-  <!-- Ribbons -->
-  <img src="ribbon.png" class="ribbon" style="left:20%;" />
-  <img src="ribbon.png" class="ribbon" style="left:60%;" />
 </body>
 </html>
